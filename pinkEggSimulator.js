@@ -1,4 +1,6 @@
 console.log("hello! Welcome to my game")
+    
+
     const canvasWidth = 500;
     const canvasHeight = 700;
     const letterKeys =['w','a','s','d','k','l'];
@@ -18,17 +20,21 @@ console.log("hello! Welcome to my game")
     var i=0;
     var bulletPower = 100;
     var bulletRegain=0;
-
+    var ranArray = [-1,1];
+   
+    
 /***********************************
  * set up
  ***********************************/
 function setup(){
+    var enemyVelocity = random(4, 7);
     cnv = new Canvas ("5:7");//(canvasWidth,canvasHeight);
     pinkEgg = new Sprite(pinkEggStartPostion,pinkEggStartPostion,pinkEggSize,'k');
     bulletGroup = new Group();
     whiteEggGang = new Group();
     allEggs = new Group();
-    world.gravity.y=1;
+    console.log(enemyVelocity);
+    console.log(enemyVelocity);
 
 }
 
@@ -112,8 +118,10 @@ function phase1(){
 
            console.log("an egg is born!"+i);
             whiteEgg =  new Sprite(i,50,pinkEggSize,'d');
+            whiteEgg.vel.y =(enemyVelocity);
             whiteEggGang.add(whiteEgg);
             allEggs.add(whiteEgg);
+
 };
 
 }
@@ -161,7 +169,6 @@ function pinkEggControls(){
 function shootBulletPink(){
     console.log(pinkEgg.x+pinkEgg.y)
     bullet = new Sprite (pinkEgg.x,pinkEgg.y,10,10,'k');
-    console.log(Math.floor(Math.random()*3));
     bullet.color = bulletColors[Math.floor(Math.random()*3)];
     
     bullet.vel.y=bulletSpeed;
