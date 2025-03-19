@@ -1,8 +1,8 @@
 console.log("hello! Welcome to my game")
     
 
-    const canvasWidth = 500;
-    const canvasHeight = 700;
+    const canvasWidth = 5;
+    const canvasHeight = 7;
     const letterKeys =['w','a','s','d','k','l'];
     const arrowKeys=["up","left","down","right","z","x"];
     const pinkEggSize =20;
@@ -27,7 +27,7 @@ console.log("hello! Welcome to my game")
  * set up
  ***********************************/
 function setup(){
-
+    
     cnv = new Canvas ("5:7");//(canvasWidth,canvasHeight);
     pinkEgg = new Sprite(pinkEggStartPostion,pinkEggStartPostion,pinkEggSize,'k');
     bulletGroup = new Group();
@@ -40,23 +40,13 @@ function setup(){
 
 function draw(){
     
+    
     //defnine visuals
     pinkEgg.color = 'pink';
     whiteEggGang.color = 'white';
     brownEggGang.color = 'tan';
 
-
-   
-    if (enemyState==1){
-        console.log('running phase1');
-        phase1();
-     
-    }
-    if (enemyState==2){
-        console.log('running phase 2');
-        phase2();
-    }
-
+console.log (enemyState)
 
     if (gameState=='start'){
     background("#FF69B4")
@@ -66,11 +56,28 @@ function draw(){
         console.log("cranberry juice"+gameState);
     }
     } else if (gameState=='playing'){
+
+        if (enemyState == 0){
         enemyState = 1;
+        }
+
         background('grey')
         text("power-level"+bulletPower,50,100);
         text("score:"+score,50,50);
+        //run code of current phase
+
+        if (enemyState=='1'){
+            console.log('running phase1');
+            phase1();
+         
+        }
+        if (enemyState=='2'){
+            console.log('running phase 2');
+            phase2();
+        }
+
         pinkEggControls()
+
     } else if (gameState=='end'){
         background('red');
         text("Uh oh, you've been cracked!",50,100);
@@ -81,7 +88,7 @@ function draw(){
             console.log("replayed again");
         }
     }
-    enemyFireBullets();
+   
     //collisions 
     bulletGroup.collides(allEggs,enemyHitBullet)
     pinkEgg.collides(allEggs,beginningOfTheEnd);
@@ -89,20 +96,20 @@ function draw(){
     
 }
 
+
 function enemyFireBullets(){
-   
-    if (enemyState == 2){
-        console.log("try to fire");
     if (frameCount%20==0){
         console.log("fired!")
         for(count=0;count>brownEggGang.length;count++){
-            brownBullet = new Sprite (brownEggGang[count],brownEggGang[count],10,10,'d');
+            brownBullet = new Sprite (100,100,10,10,'d');
             brownBullet.vel.y = 3;
             allEggs.add(brownBullet);
-        };
+        }
     }
-}
+
 };
+
+
 
 function beginningOfTheEnd(){
 gameState='end';
@@ -157,7 +164,7 @@ function phase1(){
 
 } else if (enemyCounter==enemysToFire){
     console.log("moving states")
-    enemyState=2;
+    enemyState='2';
     console.log("enemyState=",+enemyState)
     return;
 }
@@ -166,6 +173,18 @@ function phase1(){
 
 function phase2 (){
     var enemyVelocity = random (0.5,3);
+    console.log("getting ready to fire")
+
+
+    if (frameCount%20==0){
+        //fire bullets from brown eggs
+        for(count=0;count<brownEggGang.length;count++){
+            brownBullet = new Sprite (brownEggGang[count].x,brownEggGang[count].y,10,10,'d');
+            brownBullet.vel.y = 3;
+            allEggs.add(brownBullet);
+        }
+    }
+    
 
     if (frameCount%100==0){
         console.log("an brown egg is born!");
@@ -175,7 +194,8 @@ function phase2 (){
         brownEggGang.add(brownEgg);
         allEggs.add(brownEgg);
     }
-}
+        
+};
 
 function startScreen(){
     text("welcome to the pink Egg Simulator",50,50)
