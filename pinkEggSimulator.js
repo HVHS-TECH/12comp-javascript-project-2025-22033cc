@@ -10,19 +10,20 @@ console.log("hello! Welcome to my game")
     const enemyStartPosition= 50;
     const bulletRechargeTime = 20;
     const bulletColors = ['white','yellow','orange'];
-    var score =0;0
+
+    var score =0;
     var bulletOutputSpeed = 10;
     var bulletSpeed = -15;
     var pinkEggSpeed =2;
     var controls = letterKeys;
     var gameState = 'start';
-    enemyState = 0;
-    var i=0;
+    var enemyState = 0;
+    var whiteEggPostion=0;
     var bulletPower = 100;
     var bulletRegain=0;
     var ranArray = [-1,1];
     var enemyCounter = 0;
-    const enemysToFire = 5;
+    
 /***********************************
  * set up
  ***********************************/
@@ -49,57 +50,54 @@ function draw(){
 console.log (enemyState)
 
     if (gameState=='start'){
-    background("#FF69B4")
-    startScreen()
-    if(kb.presses('1')){
-        gameState='playing';
-        console.log("cranberry juice"+gameState);
-    }
-    } else if (gameState=='playing'){
-
-        if (enemyState == 0){
-        enemyState = 1;
+        //setting up start screen
+        background("#FF69B4")
+        startScreen()
+        //switch from start screen to playing 
+        if(kb.presses('1')){
+            gameState='playing';
+            enemyState = 1;
         }
+    
+    } else if (gameState=='playing'){
+    //game runing 
 
         background('grey')
         text("power-level"+bulletPower,50,100);
         text("score:"+score,50,50);
         //run code of current phase
-
         if (enemyState=='1'){
-            console.log('running phase1');
             phase1();
-         
         }
         if (enemyState=='2'){
-            console.log('running phase 2');
             phase2();
         }
-
+        // run function for controls
         pinkEggControls()
 
+        //collisions 
+        bulletGroup.collides(allEggs,enemyHitBullet)
+        pinkEgg.collides(allEggs,beginningOfTheEnd);
+        bulletPowerCharge();
+
     } else if (gameState=='end'){
+        //if the player looses
         background('red');
         text("Uh oh, you've been cracked!",50,100);
         enemyState = 0;
         text("press '1' to retry!",50,50);
+
         if (kb.presses('1')){
-            gameState='playing'
-            console.log("replayed again");
+                gameState='start'
         }
     }
-   
-    //collisions 
-    bulletGroup.collides(allEggs,enemyHitBullet)
-    pinkEgg.collides(allEggs,beginningOfTheEnd);
-    bulletPowerCharge();
     
 }
 
 
 function enemyFireBullets(){
-    if (frameCount%20==0){
-        console.log("fired!")
+    //fire bullets from all brown egg sprites active
+    if (frameCount%5==0){
         for(count=0;count>brownEggGang.length;count++){
             brownBullet = new Sprite (100,100,10,10,'d');
             brownBullet.vel.y = 3;
@@ -112,67 +110,74 @@ function enemyFireBullets(){
 
 
 function beginningOfTheEnd(){
-gameState='end';
-console.log("The end is coming")
+    //return all movement to 0; remove enemy sprites
+    gameState='end';
+    allEggs.remove();
+    pinkEgg.vel.x = 0;
+    pinkEgg.vel.y = 0;
+    enemyState = 0;
+
 
 }
 function bulletPowerCharge(){
+    //check if player has run out of bullet power 
     if (bulletPower<=0){
         text("WARNING! WARNING! NO ENERGY LEFT!",10,10)
         if(frameCount%100==0){
-            bulletRegain=bulletRegain+1;
-           
+            bulletRegain=bulletRegain+1;  
         }
+
         if(frameCount%100==0&&bulletRegain==3){
             bulletPower=bulletPower+5;
-            console.log("back to power");
         }
+    //recharge if not the case
     }else if (frameCount%bulletRechargeTime==0 && 100>bulletPower){
         bulletPower=bulletPower+5;
         bulletRegain=0;
-        console.log("power recharge"+bulletPower)
     
 } 
 }
 
-function enemyHitBullet(_bullette,_eggo){
-    _bullette.color ="green";
-    _eggo.color ="red";
-    _bullette.remove();
-    console.log("BULLET REMOVED!");
-    _eggo.remove();
-    console.log("EGG REMOVED!");
+function enemyHitBullet(_bullet,_egg){
+    // check if player bullets hit enemy
+    _bullet.remove();
+    _egg.remove();
     score=score+100;
 }
 
 function phase1(){
     var enemyVelocity = random(4, 7);
-    if(frameCount%100==0&&enemyCounter<enemysToFire){
+    //decide when to fire
+    for (count = 0; count<10;count++) { 
+        if(frameCount%50==0){
+            //move the starting position for white egg        
+            if(whiteEggPostion>600){
+                whiteEggPostion-=50;   
+            } else {
+                whiteEggPostion=whiteEggPostion+50; 
+            }
+            //spawn 2 white eggs
+            for (count=0;count<2; count++){
+                whiteEgg =  new Sprite(whiteEggPostion,50,pinkEggSize,'d');
+                whiteEgg.vel.y =(enemyVelocity);
+                whiteEggGang.add(whiteEgg);
+                allEggs.add(whiteEgg);
+                enemyCounter= enemyCounter+1;
+                whiteEggPostion = 600-whiteEggPostion;
+            }
         
-    if(i>600){
-         i=50;   
-    } else {
-       i=i+50; };
-
-           console.log("an egg is born!"+i);
-            whiteEgg =  new Sprite(i,50,pinkEggSize,'d');
-            whiteEgg.vel.y =(enemyVelocity);
-
-            whiteEggGang.add(whiteEgg);
-            allEggs.add(whiteEgg);
-            enemyCounter= enemyCounter+1;
-
-} else if (enemyCounter==enemysToFire){
-    console.log("moving states")
-    enemyState='2';
-    console.log("enemyState=",+enemyState)
-    return;
-}
-
+        } else if (enemyCounter==enemysToFire){
+            console.log("moving states")
+            enemyState='2';
+            console.log("enemyState=",+enemyState)
+            return;
+        }
+        
 }
 
 function phase2 (){
-    var enemyVelocity = random (0.5,3);
+    var enemyVelocity = 5;
+    //random (0.5,3);
     console.log("getting ready to fire")
 
 
