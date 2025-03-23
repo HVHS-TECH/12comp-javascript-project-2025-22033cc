@@ -174,7 +174,7 @@ function phase1(){
     var enemyVelocity = random(4, 7);
     //decide when to fire
     for (count = 0; count<10;count++) { 
-        if(frameCount%50==0){
+        if(frameCount%100==0){
             console.log("ready to fire the whites")
             //move the starting position for white egg        
             if(whiteEggPostion>600){
@@ -183,7 +183,7 @@ function phase1(){
                 whiteEggPostion=whiteEggPostion+50; 
             }
             //spawn 2 white eggs
-            for (var double=0;double<2; double++){
+            for (var doubles=0;doubles<2; doubles++){
                 whiteEgg =  new Sprite(whiteEggPostion,50,pinkEggSize,'d');
                 whiteEgg.vel.y =(enemyVelocity);
                 whiteEggGang.add(whiteEgg);
