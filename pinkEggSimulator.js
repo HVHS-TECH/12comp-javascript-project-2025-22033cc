@@ -9,8 +9,8 @@ console.log("hello! Welcome to my game")
     const pinkEggStartPostion =200;
     const enemyStartPosition= 50;
     const bulletRechargeTime = 20;
-    const bulletColors = ['white','yellow','orange'];
-
+    const bulletColors = ['red','white','blue'];
+    const buttonSize = []
     var score =0;
     var bulletOutputSpeed = 10;
     var bulletSpeed = -15;
@@ -23,7 +23,7 @@ console.log("hello! Welcome to my game")
     var bulletRegain=0;
     var ranArray = [-1,1];
     var enemyCounter = 0;
-    
+    var firstDraw = 0;
 /***********************************
  * set up
  ***********************************/
@@ -35,6 +35,7 @@ function setup(){
     whiteEggGang = new Group();
     brownEggGang = new Group();
     allEggs = new Group();
+    buttons = new Group();
     
 
 }
@@ -51,12 +52,25 @@ console.log (enemyState)
 
     if (gameState=='start'){
         //setting up start screen
-        background("#FF69B4")
-        startScreen()
-        //switch from start screen to playing 
+            background("#FF69B4")
+    text("welcome to the pink Egg Simulator",50,50)
+    text("press 1 to start!",50, 100)
+
+    if (firstDraw == 0){
+        buttonStart = new Sprite(250,250,200,50,'s');
+        buttonControl = new Sprite(250,300,200,50,'s');
+        buttons.add(buttonStart);
+        buttons.add(buttonControl);
+        console.log(buttons);
+        firstDraw = 1;
+    }
+    buttonClicked()
+        //call to switch from start screen to playing 
         if(kb.presses('1')){
             gameState='playing';
             enemyState = 1;
+           
+            console.log(buttons.length)
         }
     
     } else if (gameState=='playing'){
@@ -86,12 +100,15 @@ console.log (enemyState)
         text("Uh oh, you've been cracked!",50,100);
         enemyState = 0;
         text("press '1' to retry!",50,50);
-
+    //call function to check if buttons are pressed
+    
         if (kb.presses('1')){
-                gameState='start'
+                gameState='start';
         }
     }
     
+   
+
 }
 
 
@@ -107,10 +124,14 @@ function enemyFireBullets(){
 
 };
 
+function buttonClicked(){
 
+    console.log(mouseIsPressed == true);
+}
 
 function beginningOfTheEnd(){
     //return all movement to 0; remove enemy sprites
+    firstDraw = 0;
     gameState='end';
     allEggs.remove();
     pinkEgg.vel.x = 0;
@@ -145,11 +166,16 @@ function enemyHitBullet(_bullet,_egg){
     score=score+100;
 }
 
+function phaseMachine(){
+console.log("looking at the phase machine");
+}
 function phase1(){
+   
     var enemyVelocity = random(4, 7);
     //decide when to fire
     for (count = 0; count<10;count++) { 
         if(frameCount%50==0){
+            console.log("ready to fire the whites")
             //move the starting position for white egg        
             if(whiteEggPostion>600){
                 whiteEggPostion-=50;   
@@ -157,7 +183,7 @@ function phase1(){
                 whiteEggPostion=whiteEggPostion+50; 
             }
             //spawn 2 white eggs
-            for (count=0;count<2; count++){
+            for (var double=0;double<2; double++){
                 whiteEgg =  new Sprite(whiteEggPostion,50,pinkEggSize,'d');
                 whiteEgg.vel.y =(enemyVelocity);
                 whiteEggGang.add(whiteEgg);
@@ -165,15 +191,11 @@ function phase1(){
                 enemyCounter= enemyCounter+1;
                 whiteEggPostion = 600-whiteEggPostion;
             }
-        
-        } else if (enemyCounter==enemysToFire){
-            console.log("moving states")
-            enemyState='2';
-            console.log("enemyState=",+enemyState)
-            return;
         }
-        
+        }
+        phaseMachine();
 }
+        
 
 function phase2 (){
     var enemyVelocity = 5;
@@ -195,18 +217,13 @@ function phase2 (){
         console.log("an brown egg is born!");
         brownEgg = new Sprite(50,50,pinkEggSize,'d');
         brownEgg.vel.x = (enemyVelocity);
-        whiteEgg.vel.y =(enemyVelocity);
+        brownEgg.vel.y =(enemyVelocity);
         brownEggGang.add(brownEgg);
         allEggs.add(brownEgg);
     }
         
 };
 
-function startScreen(){
-    text("welcome to the pink Egg Simulator",50,50)
-    text("press 1 to start!",50, 100)
-    
-}
 function pinkEggControls(){
     var xPress=0;
     var yPress=0;
