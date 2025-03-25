@@ -25,6 +25,7 @@ console.log("hello! Welcome to my game")
     var whiteEggPostion=-50;
     var bulletPower = 100;
     var bulletRegain=0;
+    var buttonOver = 1;
     
     var ranArray = [-1,1];
     
@@ -75,7 +76,8 @@ console.log (enemyState)
         console.log(buttons);
         firstDraw = 1;
     }
-    buttonClicked()
+
+    buttonClicked();
         //call to switch from start screen to playing 
         if(kb.presses('1')){
             gameState='playing';
@@ -139,10 +141,32 @@ function enemyFireBullets(){
 };
 
 function buttonClicked(){
-    if (mouseIsPressed == true && buttonStart.mouse.hovering ==true ){
-        console.log('start button pressed')
-    }
+
+   if (kb.releases(controls[0])){
+    //button up
+    buttonOver++
+   }
+   if (kb.releases(controls[3])){
+    //button down
+    buttonOver = buttonOver-2
+   }
+   if (buttonOver==1){
+    console.log("start");
+   }
+
+   if (buttonOver==2){
+    console.log("controls")
+   }
+   if (buttonOver>2){
+    console.log("OVER OVER")
+   }
+   if(buttonOver==0){
+    console.log("UNDER UNDER")
+   }
+   
+   console.log("buttonOver="+buttonOver)
 }
+
 
 function beginningOfTheEnd(){
     //return all movement to 0; remove enemy sprites
