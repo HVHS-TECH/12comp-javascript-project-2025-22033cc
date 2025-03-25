@@ -1,3 +1,6 @@
+
+
+
 console.log("hello! Welcome to my game")
     
 
@@ -12,17 +15,22 @@ console.log("hello! Welcome to my game")
     const bulletColors = ['red','white','blue'];
     const buttonSize = []
     var score =0;
+    var whiteEggsFired  = 0;
     var bulletOutputSpeed = 10;
     var bulletSpeed = -15;
     var pinkEggSpeed =2;
     var controls = letterKeys;
     var gameState = 'start';
     var enemyState = 0;
-    var whiteEggPostion=0;
+    var whiteEggPostion=-50;
     var bulletPower = 100;
     var bulletRegain=0;
+    
     var ranArray = [-1,1];
-    var enemyCounter = 0;
+    
+    
+
+     var enemyCounter = 0;
     var firstDraw = 0;
 /***********************************
  * set up
@@ -36,6 +44,8 @@ function setup(){
     brownEggGang = new Group();
     allEggs = new Group();
     buttons = new Group();
+    //make the walls
+    wallLeft = new Sprite(canvasHeight/2,0,canvasHeight, canvasHeight,'s')
     
 
 }
@@ -60,7 +70,8 @@ console.log (enemyState)
         buttonStart = new Sprite(250,250,200,50,'s');
         buttonControl = new Sprite(250,300,200,50,'s');
         buttons.add(buttonStart);
-        buttons.add(buttonControl);
+   
+         buttons.add(buttonControl);
         console.log(buttons);
         firstDraw = 1;
     }
@@ -97,6 +108,9 @@ console.log (enemyState)
     } else if (gameState=='end'){
         //if the player looses
         background('red');
+   
+   
+   
         text("Uh oh, you've been cracked!",50,100);
         enemyState = 0;
         text("press '1' to retry!",50,50);
@@ -125,8 +139,9 @@ function enemyFireBullets(){
 };
 
 function buttonClicked(){
-
-    console.log(mouseIsPressed == true);
+    if (mouseIsPressed == true && buttonStart.mouse.hovering ==true ){
+        console.log('start button pressed')
+    }
 }
 
 function beginningOfTheEnd(){
@@ -166,17 +181,49 @@ function enemyHitBullet(_bullet,_egg){
     score=score+100;
 }
 
+function whiteEggSweep(){
+    enemyVelocity = 2;
+    console.log('start the sweep')
+    for (count = 0; count<10;count++) { 
+            //move the starting position for white egg        
+            if(whiteEggPostion>600){
+                whiteEggPostion-=50;   
+            } else {
+                whiteEggPostion=whiteEggPostion+50; 
+            }
+            //spawn 2 white eggs
+            for (var double=0;double<2; double++){
+                whiteEgg =  new Sprite(whiteEggPostion,50,pinkEggSize,'d');
+                whiteEgg.vel.y =(enemyVelocity);
+                whiteEggGang.add(whiteEgg);
+                allEggs.add(whiteEgg);
+                enemyCounter= enemyCounter+1;
+                whiteEggPostion = 600-whiteEggPostion;
+            }
+
+        }
+
+
+}
 function phaseMachine(){
-console.log("looking at the phase machine");
+    console.log('changing phases'+enemyState);
+    if (enemyState == 1 ){
+        whiteEggSweep()
+        enemyState = 2;
+        console.log('changing phases'+enemyState);
+    }
 }
 function phase1(){
-   
+    const enemysToFire = 10;
+    
+   //choose a random velocity 
     var enemyVelocity = random(4, 7);
+
     //decide when to fire
-    for (count = 0; count<10;count++) { 
+    if (enemysToFire > whiteEggsFired){
+
         if(frameCount%100==0){
-            console.log("ready to fire the whites")
-            //move the starting position for white egg        
+            //move the starting position for white egg  
             if(whiteEggPostion>600){
                 whiteEggPostion-=50;   
             } else {
@@ -189,11 +236,14 @@ function phase1(){
                 whiteEggGang.add(whiteEgg);
                 allEggs.add(whiteEgg);
                 enemyCounter= enemyCounter+1;
-                whiteEggPostion = 600-whiteEggPostion;
+                whiteEggPostion = 500-whiteEggPostion;
             }
-        }
-        }
+
+            whiteEggsFired++;
+        }   
+    }else if (enemysToFire == whiteEggsFired){
         phaseMachine();
+    }
 }
         
 
@@ -202,6 +252,13 @@ function phase2 (){
     //random (0.5,3);
     console.log("getting ready to fire")
 
+    if (frameCount%100==0){
+        console.log("an brown egg is born!");
+        brownEgg = new Sprite(50,50,pinkEggSize,'d');
+        brownEgg.vel.x = (enemyVelocity);
+        brownEggGang.add(brownEgg);
+        allEggs.add(brownEgg);
+    }
 
     if (frameCount%20==0){
         //fire bullets from brown eggs
@@ -211,16 +268,7 @@ function phase2 (){
             allEggs.add(brownBullet);
         }
     }
-    
 
-    if (frameCount%100==0){
-        console.log("an brown egg is born!");
-        brownEgg = new Sprite(50,50,pinkEggSize,'d');
-        brownEgg.vel.x = (enemyVelocity);
-        brownEgg.vel.y =(enemyVelocity);
-        brownEggGang.add(brownEgg);
-        allEggs.add(brownEgg);
-    }
         
 };
 
@@ -255,8 +303,8 @@ function pinkEggControls(){
         bulletPower=bulletPower-5;
         shootBulletPink();
     }
-            pinkEgg.vel.x = xPress;
-            pinkEgg.vel.y = yPress;
+    pinkEgg.vel.x = xPress;
+    pinkEgg.vel.y = yPress;
 
 }
 function shootBulletPink(){
