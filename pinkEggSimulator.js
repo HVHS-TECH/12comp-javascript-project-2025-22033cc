@@ -26,7 +26,8 @@ console.log("hello! Welcome to my game")
     var bulletPower = 100;
     var bulletRegain=0;
     var buttonOver = 1;
-    
+    var buttonControlColor = white;
+    var buttonStartColor = white;
     var ranArray = [-1,1];
     
     
@@ -44,9 +45,11 @@ function setup(){
     whiteEggGang = new Group();
     brownEggGang = new Group();
     allEggs = new Group();
-    buttons = new Group();
+    startScreenSprites = new Group();
     //make the walls
     wallLeft = new Sprite(canvasHeight/2,0,canvasHeight, canvasHeight,'s')
+    wallLeft.color = 'black';
+    firstDraw=0;
     
 
 }
@@ -65,25 +68,28 @@ console.log (enemyState)
         //setting up start screen
             background("#FF69B4")
     text("welcome to the pink Egg Simulator",50,50)
-    text("press 1 to start!",50, 100)
+    text("press Enter to Start!",50, 100)
 
+    
     if (firstDraw == 0){
-        buttonStart = new Sprite(250,250,200,50,'s');
-        buttonControl = new Sprite(250,300,200,50,'s');
-        buttons.add(buttonStart);
-   
-         buttons.add(buttonControl);
-        console.log(buttons);
-        firstDraw = 1;
+        console.log('running first draw')
+        buttonStart = new Sprite(250,250,200,30,'s');
+        buttonControl = new Sprite(250,300,200,30,'s');
+        indicator = new Sprite(140,300,10,'s')
+        startScreenSprites.add(buttonStart);
+        startScreenSprites.add(buttonControl);
+        startScreenSprites.add(indicator);
+        firstdraw = 1;
     }
-
+    
     buttonClicked();
-        //call to switch from start screen to playing 
-        if(kb.presses('1')){
-            gameState='playing';
-            enemyState = 1;
-           
-            console.log(buttons.length)
+        //switch the indicator if changed
+        if (buttonOver== 1){
+            //indicator next to controls
+            indicator.y = 300;
+        }else if (buttonOver==2){
+            //indicator next to start
+            indicator.y = 250;
         }
     
     } else if (gameState=='playing'){
@@ -108,7 +114,7 @@ console.log (enemyState)
         bulletPowerCharge();
 
     } else if (gameState=='end'){
-        //if the player looses
+        //if the player loses
         background('red');
    
    
@@ -141,29 +147,55 @@ function enemyFireBullets(){
 };
 
 function buttonClicked(){
+    //(buttonOver = 1)= controls; 
+    //(buttonOver = 2)= start;
 
+    //figure out what button the player is over
    if (kb.releases(controls[0])){
     //button up
     buttonOver++
    }
-   if (kb.releases(controls[3])){
+
+   if (kb.releases(controls[2])){
     //button down
-    buttonOver = buttonOver-2
+    buttonOver = buttonOver-1;
    }
+
+   if (buttonOver>2){
+    buttonOver=1
+   }
+   if(buttonOver==0){
+    buttonOver=2;
+   }
+   if(kb.presses('enter')&&buttonOver==1){
+    controlsImage = new Sprite(100,100,100,100,'s')
+
+   }
+   if (kb.releases('enter')&&buttonOver==1){
+    controlsImage.remove();
+   }
+   if ((kb.releases(controls[1])||kb.releases(controls[3]))&& buttonOver==1){
+    console.log('change controls')
+   }
+   //change stroke thickness of buttons for indicator
+
    if (buttonOver==1){
-    console.log("start");
+    buttonControlColor ='white';
+   }else{
+    buttonControlColor ='grey';
    }
 
    if (buttonOver==2){
-    console.log("controls")
+    buttonStartColor ='white';
+   }else{
+    buttonStartColor = 'grey';
    }
-   if (buttonOver>2){
-    console.log("OVER OVER")
+
+   if (kb.presses('enter')&&buttonOver==2){
+    gameState ='playing';
+    startScreenSprites.remove();
+
    }
-   if(buttonOver==0){
-    console.log("UNDER UNDER")
-   }
-   
    console.log("buttonOver="+buttonOver)
 }
 
