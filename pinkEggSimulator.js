@@ -12,7 +12,7 @@ console.log("hello! Welcome to my game")
     const pinkEggStartPostion =200;
     const enemyStartPosition= 50;
     const bulletRechargeTime = 20;
-    const bulletColors = ['red','white','blue'];
+    const bulletColors = ['#FFD23C','yellow','orange','white','#F3EEE2'];
     const buttonSize = []
     var score =0;
     var whiteEggsFired  = 0;
@@ -29,10 +29,7 @@ console.log("hello! Welcome to my game")
     var buttonControlColor = white;
     var buttonStartColor = white;
     var ranArray = [-1,1];
-    
-    
-
-     var enemyCounter = 0;
+    var enemyCounter = 0;
     var firstDraw = 0;
 /***********************************
  * set up
@@ -41,6 +38,7 @@ function setup(){
     
     cnv = new Canvas ("5:7");//(canvasWidth,canvasHeight);
     pinkEgg = new Sprite(pinkEggStartPostion,pinkEggStartPostion,pinkEggSize,'k');
+    firstDraw = 0;
     bulletGroup = new Group();
     whiteEggGang = new Group();
     brownEggGang = new Group();
@@ -49,7 +47,6 @@ function setup(){
     //make the walls
     wallLeft = new Sprite(canvasHeight/2,0,canvasHeight, canvasHeight,'s')
     wallLeft.color = 'black';
-    firstDraw=0;
     
 
 }
@@ -70,16 +67,19 @@ console.log (enemyState)
     text("welcome to the pink Egg Simulator",50,50)
     text("press Enter to Start!",50, 100)
 
-    
     if (firstDraw == 0){
-        console.log('running first draw')
+        console.log('')
         buttonStart = new Sprite(250,250,200,30,'s');
+        buttonStart.textsize = 10;
+        buttonStart.text = 'start a game ';
         buttonControl = new Sprite(250,300,200,30,'s');
+        buttonControl.textsize = 10;
+        buttonControl.text = 'controls(currently not working)'
         indicator = new Sprite(140,300,10,'s')
         startScreenSprites.add(buttonStart);
         startScreenSprites.add(buttonControl);
         startScreenSprites.add(indicator);
-        firstdraw = 1;
+        firstDraw = 1;
     }
     
     buttonClicked();
@@ -94,11 +94,11 @@ console.log (enemyState)
     
     } else if (gameState=='playing'){
     //game runing 
-
         background('grey')
         text("power-level"+bulletPower,50,100);
         text("score:"+score,50,50);
         //run code of current phase
+        console.log('enemystate=',+enemyState)
         if (enemyState=='1'){
             phase1();
         }
@@ -122,6 +122,7 @@ console.log (enemyState)
         text("Uh oh, you've been cracked!",50,100);
         enemyState = 0;
         text("press '1' to retry!",50,50);
+        text("your score was"+score,50,150)
     //call function to check if buttons are pressed
     
         if (kb.presses('1')){
@@ -193,8 +194,8 @@ function buttonClicked(){
 
    if (kb.presses('enter')&&buttonOver==2){
     gameState ='playing';
+    enemyState = 1;
     startScreenSprites.remove();
-
    }
    console.log("buttonOver="+buttonOver)
 }
@@ -240,7 +241,7 @@ function enemyHitBullet(_bullet,_egg){
 function whiteEggSweep(){
     enemyVelocity = 2;
     console.log('start the sweep')
-    for (count = 0; count<10;count++) { 
+    for (count = 0; count<15;count++) { 
             //move the starting position for white egg        
             if(whiteEggPostion>600){
                 whiteEggPostion-=50;   
@@ -366,7 +367,7 @@ function pinkEggControls(){
 function shootBulletPink(){
 
     bullet = new Sprite (pinkEgg.x,pinkEgg.y,10,10,'k');
-    bullet.color = bulletColors[Math.floor(Math.random()*3)];
+    bullet.color = bulletColors[Math.floor(Math.random()*5)];
     
     bullet.vel.y=bulletSpeed;
 
