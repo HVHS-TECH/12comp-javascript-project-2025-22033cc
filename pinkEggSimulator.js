@@ -66,7 +66,7 @@ console.log (enemyState)
             background("#FF69B4")
     text("welcome to the pink Egg Simulator",50,50)
     text("press Enter to Start!",50, 100)
-    text('press k to shoot,Wasd controls and 1 to restart',50,150)
+    text('press k to shoot,Wasd controls and 1 to',50,150)
 
     if (firstDraw == 0){
         console.log('game game repositry please work  ')
