@@ -68,7 +68,7 @@ console.log (enemyState)
     text("press Enter to Start!",50, 100)
 
     if (firstDraw == 0){
-        console.log('')
+        console.log('game game repositry please work  ')
         buttonStart = new Sprite(250,250,200,30,'s');
         buttonStart.textsize = 10;
         buttonStart.text = 'start a game ';
