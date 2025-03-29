@@ -19,6 +19,7 @@ console.log("hello! Welcome to my game")
     var whiteEggsFired  = 0;
     var bulletOutputSpeed = 10;
     var bulletSpeed = -15;
+    var bombSpeed = -5;
     var pinkEggSpeed =2;
     var controls = letterKeys;
     var gameState = 'start';
@@ -448,6 +449,10 @@ function pinkEggControls(){
         bulletPower=bulletPower-5;
         shootBulletPink();
     }
+    if(kb.presses(controls[5])&&bulletPower>50){
+        bulletPower = bulletPower-50;
+        shootBomb();
+    }
     pinkEgg.vel.x = xPress;
     pinkEgg.vel.y = yPress;
 
@@ -460,4 +465,17 @@ function shootBulletPink(){
     bullet.vel.y=bulletSpeed;
 
     bulletGroup.add(bullet);
+}
+function shootBomb(){
+    bomb = new Sprite(pinkEgg.x,pinkEgg.y,10,10,'k');
+    bomb.color = bulletColors[0]
+    var bombFinalPosition = pinkEgg.y+50;
+    
+    while(bombFinalPosition >bomb.y){
+        bomb.vel.y = bombSpeed;
+    } 
+    if (bombfinalPosition == bomb.y){
+        bomb.color = 'red';
+    }
+
 }
