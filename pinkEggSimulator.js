@@ -20,6 +20,7 @@ console.log("hello! Welcome to my game")
     var bulletOutputSpeed = 10;
     var bulletSpeed = -15;
     var bombSpeed = -5;
+    var bombActive = false;
     var pinkEggSpeed =2;
     var controls = letterKeys;
     var gameState = 'start';
@@ -34,6 +35,13 @@ console.log("hello! Welcome to my game")
     var enemyCounter = 0;
     var firstDraw = 0;
     var pinkEggLives = 3;
+    var bombFinalPosition = 0;
+    var shrapnelAngle = 0 ;
+    var shrapnelRotation = [4,7];
+    var shrapnelTheta  = 0;
+    var shrapnelOpposite = 0;
+    var shrapnelAdjacent = 0;
+    var shrapnelTotal = 0;
 /***********************************
  * set up
  ***********************************/
@@ -131,7 +139,9 @@ console.log (enemyState)
         }
         // run function for controls
         pinkEggControls()
-
+        if(bombActive == true){
+            bombCheck()
+        }
         //collisions 
         bulletGroup.collides(allEggs,enemyHitBullet)
         pinkEgg.collides(allEggs,beginningOfTheEnd);
@@ -467,15 +477,41 @@ function shootBulletPink(){
     bulletGroup.add(bullet);
 }
 function shootBomb(){
-    bomb = new Sprite(pinkEgg.x,pinkEgg.y,10,10,'k');
+    bomb = new Sprite(pinkEgg.x,pinkEgg.y,15,'k');
     bomb.color = bulletColors[0]
-    var bombFinalPosition = pinkEgg.y+50;
-    
-    while(bombFinalPosition >bomb.y){
-        bomb.vel.y = bombSpeed;
-    } 
-    if (bombfinalPosition == bomb.y){
-        bomb.color = 'red';
-    }
+     bombFinalPosition = pinkEgg.y-100;
+    bombActive = true;
+    bomb.vel.y = bombSpeed;
+}
+function bombCheck(){
+        if(bombFinalPosition==bomb.y){
+            bombFinalPosition = 0;
+            bomb.vel.y = 0;
+            bomb.color = 'red'
 
+            //making shrapnel
+            for(count=0;count<9;count++){
+                console.log('making shrapnel',+count);
+                shrapnel = new Sprite(bomb.x,bomb.y,5,5,'k');
+                shrapnel.rotationSpeed = ((Math.random(shrapnelRotation*2))*Math.random(ranArray));
+                shrapnel.rotation = shrapnelAngle;
+                shrapnelAngle = shrapnelAngle+45;
+
+                //figure out the angles and how the shrapnel should move 
+                if(shrapnelAngle<180){
+                    if (shrapnelAngle>90){
+                        shrapnelTheta = shrapnelAngle-90;
+                    }else{
+                        shrapnelTheta = shrapnelAngle
+                    }
+
+                    //turn shrapnelTheta into radians
+                    shrapnelTheta = shrapnelTheta*Math.PI/180.0;
+
+                    Math.tan(shrapnelTheta) = shrapnelTotal;
+                    console.log(shrapnelOpposite/shrapnelAdjacent);
+                    console.log(Math.tan(shrapnelTheta));
+                }
+            }
+        }
 }
