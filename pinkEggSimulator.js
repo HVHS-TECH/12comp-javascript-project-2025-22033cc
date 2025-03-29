@@ -54,9 +54,10 @@ function setup(){
  * preload
  *************************************/
 function preload(){
-	pinkEggImg = loadImage('/workspaces/12comp-javascript-project-2025-22033cc/assets/images/pinkEgg.png');
-    arrowKeyImg = loadImage('/workspaces/12comp-javascript-project-2025-22033cc/assets/images/arrowKeys.png')
-    letterKeysImg = loadImage('/workspaces/12comp-javascript-project-2025-22033cc/assets/images/letterKeys.png')
+    
+	pinkEggImg = loadImage('assets/images/pinkEgg.png');
+    arrowKeyImg = loadImage('assets/images/arrowKeys.png')
+    letterKeysImg = loadImage('assets/images/letterKeys.png')
 }
 /*************************************
  * draw loop
@@ -157,7 +158,10 @@ function enemyFireBullets(){
     }
 
 };
-
+/***********************************************
+ * buttonClicked 
+ * checking if button is being pressed
+************************************************/
 function buttonClicked(){
     //(buttonOver = 1)= controls; 
     //(buttonOver = 2)= start;
@@ -182,10 +186,10 @@ function buttonClicked(){
    if(kb.presses('enter')&&buttonOver==1){
     controlsImage = new Sprite(100,200,100,100,'s')
         if (controls = letterKeys) {
-            controlsImage.image = (letterKeysImgImg);
+            controlsImage.image = (letterKeysImg);
 
         }else if(controls = arrowKeys){
-            controlsImage.image = (arrowKeyImgKeysImg);
+            controlsImage.image = (arrowKeyImg);
         }
 
    }
