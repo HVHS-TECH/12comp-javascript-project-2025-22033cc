@@ -4,16 +4,17 @@
 console.log("hello! Welcome to my game")
     
 
-    const canvasWidth = 5;
-    const canvasHeight = 7;
+    const canvasWidth = 500;
+    const canvasHeight = 700;
     const letterKeys =['w','a','s','d','k','l'];
     const arrowKeys=["up","left","down","right","z","x"];
     const pinkEggSize =20;
-    const pinkEggStartPostion =200;
+    const pinkEggStartPosition =200;
     const enemyStartPosition= 50;
     const bulletRechargeTime = 20;
     const bulletColors = ['#FFD23C','yellow','orange','white','#F3EEE2'];
     const buttonSize = []
+    const wallThickness = 2;
     var score =0;
     var whiteEggsFired  = 0;
     var bulletOutputSpeed = 10;
@@ -22,7 +23,7 @@ console.log("hello! Welcome to my game")
     var controls = letterKeys;
     var gameState = 'start';
     var enemyState = 0;
-    var whiteEggPostion=-50;
+    var whiteEggPosition=-50;
     var bulletPower = 100;
     var bulletRegain=0;
     var buttonOver = 1;
@@ -31,23 +32,33 @@ console.log("hello! Welcome to my game")
     var ranArray = [-1,1];
     var enemyCounter = 0;
     var firstDraw = 0;
+    var pinkEggLives = 3;
 /***********************************
  * set up
  ***********************************/
 function setup(){
-    
-    cnv = new Canvas ("5:7");//(canvasWidth,canvasHeight);
-    pinkEgg = new Sprite(pinkEggStartPostion,pinkEggStartPostion,pinkEggSize,'k');
+    //canvasWidth = 500; canvasHeight=700
+    cnv = new Canvas (canvasWidth,canvasHeight,);
+    displayMode('centered')
+    pinkEgg = new Sprite(pinkEggStartPosition,pinkEggStartPosition,pinkEggSize,'k');
     firstDraw = 0;
     bulletGroup = new Group();
     whiteEggGang = new Group();
     brownEggGang = new Group();
+    brownBulletGang = new Group();
+    walls = new Group();
     allEggs = new Group();
     startScreenSprites = new Group();
-    //make the walls
-    wallLeft = new Sprite(canvasHeight/2,0,canvasHeight, canvasHeight,'s')
-    wallLeft.color = 'black';
-    
+    //make the walls for collisions
+    wallBot = new Sprite(canvasWidth/2,canvasHeight,canvasWidth,   wallThickness, "s");
+	wallTop = new Sprite(canvasWidth/2,  0,canvasWidth,   wallThickness, "s");
+	wallRH = new Sprite(canvasWidth,  canvasHeight/2, wallThickness, canvasHeight, "s");
+	wallLH = new Sprite(0,  canvasHeight/2, wallThickness, canvasHeight, "s");
+    walls.add(wallTop);
+    walls.add(wallBot);
+    walls.add(wallRH);
+    walls.add(wallLH);
+    console.log(walls);
 
 }
 /*************************************
@@ -123,6 +134,10 @@ console.log (enemyState)
         //collisions 
         bulletGroup.collides(allEggs,enemyHitBullet)
         pinkEgg.collides(allEggs,beginningOfTheEnd);
+        wallBot.collides(whiteEggGang,allEggsRemover);
+        wallLH.collides(brownEggGang,allEggsRemover);
+        wallRH.collides(brownEggGang,allEggsRemover);
+        walls.collides(brownBulletGang,allEggsRemover);
         bulletPowerCharge();
 
     } else if (gameState=='end'){
@@ -146,18 +161,30 @@ console.log (enemyState)
 
 }
 
-
+function allEggsRemover(_walls,_eggs){
+    console.log('another egg has died of natural causes')
+    _eggs.remove();
+}
+/*************************************************
+ * enemyFireBullets
+ * fire the bullets from brown and quail eggs
+ ************************************************/
+/*
 function enemyFireBullets(){
     //fire bullets from all brown egg sprites active
     if (frameCount%5==0){
         for(count=0;count>brownEggGang.length;count++){
             brownBullet = new Sprite (100,100,10,10,'d');
             brownBullet.vel.y = 3;
+            brownBulletGang.add(brownBullet);
             allEggs.add(brownBullet);
+
+            
         }
     }
 
 };
+*/
 /***********************************************
  * buttonClicked 
  * checking if button is being pressed
@@ -220,7 +247,10 @@ function buttonClicked(){
    }
    console.log("buttonOver="+buttonOver)
 }
-
+/**************************************************
+ * beginningOfTheEnd())
+ * return all movement to 0, remove almost all sprites
+ *************************************************/
 
 function beginningOfTheEnd(){
     //return all movement to 0; remove enemy sprites
@@ -233,6 +263,11 @@ function beginningOfTheEnd(){
 
 
 }
+/**************************************************
+ * bulletPowerCharge()
+ * check if player has run out of bullet power
+ * recharge bullet power
+ *************************************************/
 function bulletPowerCharge(){
     //check if player has run out of bullet power 
     if (bulletPower<=0){
@@ -252,6 +287,11 @@ function bulletPowerCharge(){
 } 
 }
 
+/************************************************
+ * enemyHitBullet()
+ * collider
+ * removing bullet or enemy egg.
+ ***********************************************/
 function enemyHitBullet(_bullet,_egg){
     // check if player bullets hit enemy
     _bullet.remove();
@@ -259,38 +299,55 @@ function enemyHitBullet(_bullet,_egg){
     score=score+100;
 }
 
+/**************************************************
+ * whiteEggSweep
+ * a small total area attack that spawns a few eggs to fall down
+ **************************************************/
 function whiteEggSweep(){
-    enemyVelocity = 2;
-    console.log('start the sweep')
-    for (count = 0; count<15;count++) { 
+    enemyVelocity = 4;
+    whiteEggPosition =-50;
+    for (count = 0; count<7;count++) { 
             //move the starting position for white egg        
-            if(whiteEggPostion>600){
-                whiteEggPostion-=50;   
+            if(whiteEggPosition>600){
+                whiteEggPosition-=50;   
             } else {
-                whiteEggPostion=whiteEggPostion+50; 
+                whiteEggPosition=whiteEggPosition+50; 
+            }
+            if(whiteEggPosition==500-whiteEggPosition){
+                whiteEggPosition = whiteEggPosition-20;
             }
             //spawn 2 white eggs
             for (var double=0;double<2; double++){
-                whiteEgg =  new Sprite(whiteEggPostion,50,pinkEggSize,'d');
+                whiteEgg =  new Sprite(whiteEggPosition,50,pinkEggSize,'d');
                 whiteEgg.vel.y =(enemyVelocity);
                 whiteEggGang.add(whiteEgg);
                 allEggs.add(whiteEgg);
                 enemyCounter= enemyCounter+1;
-                whiteEggPostion = 600-whiteEggPostion;
+                whiteEggPosition = 600-whiteEggPosition;
             }
 
         }
 
-
+/************************************************
+ * phaseMachine()
+ * a function to change the phases when the phase is finished
+ ************************************************/
 }
 function phaseMachine(){
     console.log('changing phases'+enemyState);
     if (enemyState == 1 ){
+        if (frameCount%50==0){
         whiteEggSweep()
+        
         enemyState = 2;
         console.log('changing phases'+enemyState);
+        }
     }
 }
+/***************************************************
+ * phase1()
+ * the first phase, having white eggs falling down from outside to inside.
+ **************************************************/
 function phase1(){
     const enemysToFire = 10;
     
@@ -302,19 +359,22 @@ function phase1(){
 
         if(frameCount%100==0){
             //move the starting position for white egg  
-            if(whiteEggPostion>600){
-                whiteEggPostion-=50;   
+            if(whiteEggPosition>600){
+                whiteEggPosition-=50;   
             } else {
-                whiteEggPostion=whiteEggPostion+50; 
+                whiteEggPosition=whiteEggPosition+50; 
+            }
+            if(whiteEggPosition==(500-whiteEggPosition)){
+                whiteEggPosition = whiteEggPosition+20;
             }
             //spawn 2 white eggs
             for (var doubles=0;doubles<2; doubles++){
-                whiteEgg =  new Sprite(whiteEggPostion,50,pinkEggSize,'d');
+                whiteEgg =  new Sprite(whiteEggPosition,50,pinkEggSize,'d');
                 whiteEgg.vel.y =(enemyVelocity);
                 whiteEggGang.add(whiteEgg);
                 allEggs.add(whiteEgg);
                 enemyCounter= enemyCounter+1;
-                whiteEggPostion = 500-whiteEggPostion;
+                whiteEggPosition = 500-whiteEggPosition;
             }
 
             whiteEggsFired++;
@@ -323,10 +383,13 @@ function phase1(){
         phaseMachine();
     }
 }
-        
+/*******************************************************
+ * phase2()
+ * The second phase, introducing brown Eggs
+ * *************************************************** */       
 
 function phase2 (){
-    var enemyVelocity = 5;
+    var enemyVelocity = 2;
     //random (0.5,3);
     console.log("getting ready to fire")
 
@@ -344,12 +407,16 @@ function phase2 (){
             brownBullet = new Sprite (brownEggGang[count].x,brownEggGang[count].y,10,10,'d');
             brownBullet.vel.y = 3;
             allEggs.add(brownBullet);
+            brownBulletGang.add(brownBullet);
         }
     }
 
         
 };
-
+/*******************************************************************
+ * pinkEggControls()
+ * moves the pink egg if controls are pressed
+ * ****************************************************************/
 function pinkEggControls(){
     var xPress=0;
     var yPress=0;
