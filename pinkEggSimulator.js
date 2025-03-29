@@ -26,8 +26,8 @@ console.log("hello! Welcome to my game")
     var bulletPower = 100;
     var bulletRegain=0;
     var buttonOver = 1;
-    var buttonControlColor = white;
-    var buttonStartColor = white;
+    var buttonControlColor = "white";
+    var buttonStartColor = "white";
     var ranArray = [-1,1];
     var enemyCounter = 0;
     var firstDraw = 0;
@@ -54,7 +54,9 @@ function setup(){
  * preload
  *************************************/
 function preload(){
-	imgBG = loadImage('images/');
+	pinkEggImg = loadImage('/workspaces/12comp-javascript-project-2025-22033cc/assets/images/pinkEgg.png');
+    arrowKeyImg = loadImage('/workspaces/12comp-javascript-project-2025-22033cc/assets/images/arrowKeys.png')
+    letterKeysImg = loadImage('/workspaces/12comp-javascript-project-2025-22033cc/assets/images/letterKeys.png')
 }
 /*************************************
  * draw loop
@@ -178,7 +180,13 @@ function buttonClicked(){
     buttonOver=2;
    }
    if(kb.presses('enter')&&buttonOver==1){
-    controlsImage = new Sprite(100,100,100,100,'s')
+    controlsImage = new Sprite(100,200,100,100,'s')
+        if (controls = letterKeys) {
+            controlsImage.image = (letterKeysImgImg);
+
+        }else if(controls = arrowKeys){
+            controlsImage.image = (arrowKeyImgKeysImg);
+        }
 
    }
    if (kb.releases('enter')&&buttonOver==1){
