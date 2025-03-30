@@ -39,8 +39,8 @@ console.log("hello! Welcome to my game")
     var shrapnelAngle = 0 ;
     var shrapnelRotation = [4,7];
     var shrapnelTheta  = 0;
-    var shrapnelOpposite = 0;
-    var shrapnelAdjacent = 0;
+    var shrapnelA = 0;
+    var shrapnelB = 0;
     var shrapnelTotal = 0;
 /***********************************
  * set up
@@ -243,7 +243,7 @@ function buttonClicked(){
 
 //if the game is on the start screen, execute the following when enter is pressed 
         //show a thumbnail of the controls
-    if (gameState == 'start'){
+    //if (gameState == 'start'){
         if(kb.presses('enter')&&buttonOver==1){
             controlsImage = new Sprite(100,200,100,100,'s')
                 if (controls = letterKeys) {
@@ -262,26 +262,27 @@ function buttonClicked(){
         if ((kb.releases(controls[1])||kb.releases(controls[3]))&& buttonOver==1){
             console.log('change controls')
         }
-    } else if (gameState=='end'){
-        //start the game, remove the unneeded sprites
+      if (gameState=='start'){
+      //start the game, remove the unneeded sprites
         if (kb.presses('enter')&&buttonOver==2){
 
             gameState ='playing';
             enemyState = 1;
             startScreenSprites.remove();
            }
+            /*
         if (kb.presses('enter')&&buttonOver==1){
             gameState = 'start'
             firstDraw = 0;
             endScreenSprites.remove();
         }
         if (kb.presses('enter')&&buttonOver == 2 ){
-            gameState = 'restart'
+            gameState = 'playing'
             enemyState = '1'
             score = 0;
             endScreenSprites.remove();
         }
-    }
+    }*/
    //change stroke thickness of buttons for indicator
 /*
    if (buttonOver==1){
@@ -297,6 +298,7 @@ function buttonClicked(){
    }
 
   */ 
+}
 }
 /**************************************************
  * beginningOfTheEnd())
@@ -530,12 +532,12 @@ function bombCheck(){
             bomb.color = 'red'
 
             //making shrapnel
-            for(count=0;count<9;count++){
+            for(count=0;count<10;count++){
                 console.log('making shrapnel',+count);
                 shrapnel = new Sprite(bomb.x,bomb.y,5,5,'k');
                 shrapnel.rotationSpeed = ((Math.random(shrapnelRotation*2))*Math.random(ranArray));
                 shrapnel.rotation = shrapnelAngle;
-                shrapnelAngle = shrapnelAngle+45;
+                shrapnelAngle = shrapnelAngle+36;
 
                 //figure out the angles and how the shrapnel should move 
                 if(shrapnelAngle<180){
@@ -547,13 +549,14 @@ function bombCheck(){
 
                     //turn shrapnelTheta into radians
                     shrapnelTheta = shrapnelTheta*Math.PI/180.0;
+                    console.log('theta'+shrapnelTheta)
+                    shrapnelTheta = Math.tan(shrapnelTheta);
+                    console.log('theta',shrapnelTheta)
+                    shrapnelA = (shrapnelTheta*10)
+                    shrapnelB = 10
+                    console.log(shrapnelTheta)
+                    console.log(shrapnelA/shrapnelB)
 
-                    shrapnelTotal = Math.tan(shrapnelTheta);
-                    shrapnelTotal = Math.fraction(shrapnelTotal)
-                    console.log(shrapnelTotal)
-                    
-                    console.log(shrapnelOpposite/shrapnelAdjacent);
-                    console.log(Math.tan(shrapnelTheta));
                 }
             }
         }
