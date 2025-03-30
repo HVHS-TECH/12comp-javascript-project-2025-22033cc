@@ -58,6 +58,7 @@ function setup(){
     walls = new Group();
     allEggs = new Group();
     startScreenSprites = new Group();
+    endScreenSprites = new Group();
     //make the walls for collisions
     wallBot = new Sprite(canvasWidth/2,canvasHeight,canvasWidth,   wallThickness, "s");
 	wallTop = new Sprite(canvasWidth/2,  0,canvasWidth,   wallThickness, "s");
@@ -90,7 +91,6 @@ function draw(){
     whiteEggGang.color = 'white';
     brownEggGang.color = 'tan';
 
-console.log (enemyState)
 
     if (gameState=='start'){
         //setting up start screen
@@ -154,18 +154,37 @@ console.log (enemyState)
     } else if (gameState=='end'){
         //if the player loses
         background('red');
-   
-   
-   
-        text("Uh oh, you've been cracked!",50,100);
-        enemyState = 0;
-        text("press '1' to retry!",50,50);
-        text("your score was"+score,50,150)
-    //call function to check if buttons are pressed
-    
-        if (kb.presses('1')){
-                gameState='start';
+        //load button sprites
+        if (firstDraw == 0){
+        buttonRestart = new Sprite(250,250,200,30,'s');
+        buttonRestart.textsize = 10;
+        buttonRestart.text = 'start a game ';
+        buttonReturn = new Sprite(250,300,200,30,'s');
+        buttonReturn.textsize = 10;
+        buttonReturn.text = 'controls(currently not working)'
+        indicator = new Sprite(140,300,10,'s')
+        firstDraw = 1;
+        //add all sprites to group
+        endScreenSprites.add(buttonRestart)
+        endScreenSprites.add(buttonReturn)
+        endScreenSprites.add(indicator)
         }
+
+        text("Uh oh, you've been cracked!",50,100);    
+        text("press enter to retry!",50,50);
+        text("your score was"+score,50,150)
+        enemyState = 0;
+    //call function to check if buttons are pressed
+    buttonClicked();
+        //switch the indicator if changed
+        if (buttonOver== 1){
+            //indicator next to controls
+            indicator.y = 300;
+        }else if (buttonOver==2){
+            //indicator next to start
+            indicator.y = 250;
+        }
+
     }
     
    
@@ -221,24 +240,50 @@ function buttonClicked(){
    if(buttonOver==0){
     buttonOver=2;
    }
-   if(kb.presses('enter')&&buttonOver==1){
-    controlsImage = new Sprite(100,200,100,100,'s')
-        if (controls = letterKeys) {
-            controlsImage.image = (letterKeysImg);
 
-        }else if(controls = arrowKeys){
-            controlsImage.image = (arrowKeyImg);
+//if the game is on the start screen, execute the following when enter is pressed 
+        //show a thumbnail of the controls
+    if (gameState == 'start'){
+        if(kb.presses('enter')&&buttonOver==1){
+            controlsImage = new Sprite(100,200,100,100,'s')
+                if (controls = letterKeys) {
+                    controlsImage.image = (letterKeysImg);
+
+                }else if(controls = arrowKeys){
+                    controlsImage.image = (arrowKeyImg);
+                }
+
         }
 
-   }
-   if (kb.releases('enter')&&buttonOver==1){
-    controlsImage.remove();
-   }
-   if ((kb.releases(controls[1])||kb.releases(controls[3]))&& buttonOver==1){
-    console.log('change controls')
-   }
-   //change stroke thickness of buttons for indicator
+        if (kb.releases('enter')&&buttonOver==1){
+            controlsImage.remove();
+        }
 
+        if ((kb.releases(controls[1])||kb.releases(controls[3]))&& buttonOver==1){
+            console.log('change controls')
+        }
+    } else if (gameState=='end'){
+        //start the game, remove the unneeded sprites
+        if (kb.presses('enter')&&buttonOver==2){
+
+            gameState ='playing';
+            enemyState = 1;
+            startScreenSprites.remove();
+           }
+        if (kb.presses('enter')&&buttonOver==1){
+            gameState = 'start'
+            firstDraw = 0;
+            endScreenSprites.remove();
+        }
+        if (kb.presses('enter')&&buttonOver == 2 ){
+            gameState = 'restart'
+            enemyState = '1'
+            score = 0;
+            endScreenSprites.remove();
+        }
+    }
+   //change stroke thickness of buttons for indicator
+/*
    if (buttonOver==1){
     buttonControlColor ='white';
    }else{
@@ -251,12 +296,7 @@ function buttonClicked(){
     buttonStartColor = 'grey';
    }
 
-   if (kb.presses('enter')&&buttonOver==2){
-    gameState ='playing';
-    enemyState = 1;
-    startScreenSprites.remove();
-   }
-   console.log("buttonOver="+buttonOver)
+  */ 
 }
 /**************************************************
  * beginningOfTheEnd())
@@ -508,7 +548,10 @@ function bombCheck(){
                     //turn shrapnelTheta into radians
                     shrapnelTheta = shrapnelTheta*Math.PI/180.0;
 
-                    Math.tan(shrapnelTheta) = shrapnelTotal;
+                    shrapnelTotal = Math.tan(shrapnelTheta);
+                    shrapnelTotal = Math.fraction(shrapnelTotal)
+                    console.log(shrapnelTotal)
+                    
                     console.log(shrapnelOpposite/shrapnelAdjacent);
                     console.log(Math.tan(shrapnelTheta));
                 }
