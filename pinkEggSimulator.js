@@ -534,8 +534,8 @@ function bombCheck(){
             bomb.color = 'red'
 
             //making shrapnel
-            
-            for(count=0;count<10;count++){
+            shrapnelAngle = -126
+            for(count=0;count<4;count++){
                 console.log('making shrapnel',+count);
                 shrapnel = new Sprite(bomb.x,bomb.y,5,5,'k');
                 shrapnel.rotationSpeed = ((Math.random(shrapnelRotation*2))*Math.random(ranArray));
@@ -543,7 +543,6 @@ function bombCheck(){
                 shrapnelAngle = shrapnelAngle+36;
 
                 //figure out the angles and how the shrapnel should move 
-                if(shrapnelAngle<180){
                     if (shrapnelAngle>90){
                         shrapnelTheta = shrapnelAngle-90;
                          shrapnelCompass = 3;
@@ -562,40 +561,18 @@ function bombCheck(){
                     shrapnelB = 10
                     console.log(shrapnelTheta)
                     console.log(shrapnelA/shrapnelB)
-                    
-
-                    
-                } else if (shrapnelAngle>180){
-                    if (shrapnelAngle>270){
-                        shrapnelTheta = shrapnelAngle-270
-                        shrapnelCompass = 1;
-                    }else{
-                        shrapnelTheta = shrapnelAngle-180
-                        shrapnelCompass =4;
-                    }
+                
                     shrapnelTheta = shrapnelTheta*Math.PI/180.0;
-                    console.log('theta'+shrapnelTheta)
-                    shrapnelTheta = Math.tan(shrapnelTheta);
                     console.log('theta',shrapnelTheta)
                     shrapnelA = (shrapnelTheta*10)
                     shrapnelB = 10
                     console.log(shrapnelTheta)
                     console.log(shrapnelA/shrapnelB)
-                }
+                
             //use shrapnelA and B to find velocity
-            if (shrapnelCompass = 1){
-                shrapnel.vel.x = shrapnelA/2
-                shrapnel.vel.y = shrapnelB/2
-            } else if (shrapnelCompass = 2){
-                shrapnel.vel.x = shrapnelA/2
-                shrapnel.vel.y = shrapnelB/2
-            } else if (shrapnelCompass = 3){
-                shrapnel.vel.x = shrapnelA/2
-                shrapnel.vel.y = shrapnelB/2
-            } else if (shrapnelCompass = 4){
-                shrapnel.vel.x = shrapnelA/2
-                shrapnel.vel.x = shrapnelB/2
-            }
+
+            shrapnel.vel.x = shrapnelA
+            shrapnel.vel.y = shrapnelB
         }
     }
 }
