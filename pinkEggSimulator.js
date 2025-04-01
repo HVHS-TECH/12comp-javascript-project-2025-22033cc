@@ -36,7 +36,7 @@ console.log("hello! Welcome to my game")
     var firstDraw = 0;
     var pinkEggLives = 3;
     var bombFinalPosition = 0;
-    var shrapnelAngle = 0 ;
+    var shrapnelAngle = -36;
     var shrapnelRotation = [4,7];
     var shrapnelTheta  = 0;
     var shrapnelA = 0;
@@ -535,13 +535,13 @@ function bombCheck(){
 
             //making shrapnel
             shrapnelAngle = -126
-            for(count=0;count<4;count++){
+            for(count=0;count<8;count++){
                 console.log('making shrapnel',+count);
-                shrapnel = new Sprite(bomb.x,bomb.y,5,5,'k');
+                shrapnel = new Sprite(bomb.x,bomb.y,10,10,'k');
                 shrapnel.rotationSpeed = ((Math.random(shrapnelRotation*2))*Math.random(ranArray));
                 shrapnel.rotation = shrapnelAngle;
                 shrapnelAngle = shrapnelAngle+36;
-
+                
                 //figure out the angles and how the shrapnel should move 
                     if (shrapnelAngle>90){
                         shrapnelTheta = shrapnelAngle-90;
@@ -562,17 +562,12 @@ function bombCheck(){
                     console.log(shrapnelTheta)
                     console.log(shrapnelA/shrapnelB)
                 
-                    shrapnelTheta = shrapnelTheta*Math.PI/180.0;
-                    console.log('theta',shrapnelTheta)
-                    shrapnelA = (shrapnelTheta*10)
-                    shrapnelB = 10
-                    console.log(shrapnelTheta)
-                    console.log(shrapnelA/shrapnelB)
                 
             //use shrapnelA and B to find velocity
 
-            shrapnel.vel.x = shrapnelA
-            shrapnel.vel.y = shrapnelB
+            shrapnel.vel.x = -shrapnelA
+            shrapnel.vel.y = -shrapnelB
         }
+        bomb.remove();
     }
 }
