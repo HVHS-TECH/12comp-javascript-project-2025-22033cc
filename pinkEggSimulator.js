@@ -15,6 +15,7 @@ console.log("hello! Welcome to my game")
     const bulletColors = ['#FFD23C','yellow','orange','white','#F3EEE2'];
     const buttonSize = []
     const wallThickness = 2;
+    const ranArray = [-1,1];
     var score =0;
     var whiteEggsFired  = 0;
     var bulletOutputSpeed = 10;
@@ -25,17 +26,17 @@ console.log("hello! Welcome to my game")
     var controls = letterKeys;
     var gameState = 'start';
     var enemyState = 0;
-    var whiteEggPosition=-50;
+    var whiteEggPosition=-200;
     var bulletPower = 100;
     var bulletRegain=0;
     var buttonOver = 1;
-    var buttonControlColor = "white";
-    var buttonStartColor = "white";
-    var ranArray = [-1,1];
     var enemyCounter = 0;
     var firstDraw = 0;
     var pinkEggLives = 3;
+    
     var bombFinalPosition = 0;
+    
+    
     var shrapnelAngle = -36;
     var shrapnelRotation = [4,7];
     var shrapnelTheta  = 0;
@@ -54,6 +55,7 @@ function setup(){
     pinkEgg = new Sprite(pinkEggStartPosition,pinkEggStartPosition,pinkEggSize,'k');
     firstDraw = 0;
     bulletGroup = new Group();
+    bombGroup = new Group();
     whiteEggGang = new Group();
     brownEggGang = new Group();
     brownBulletGang = new Group();
@@ -443,30 +445,33 @@ function phase1(){
  * The second phase, introducing brown Eggs
  * *************************************************** */       
 
-function phase2 (){
+function phase2() {
     var enemyVelocity = 2;
     //random (0.5,3);
     console.log("getting ready to fire")
-
-    if (frameCount%100==0){
-        console.log("an brown egg is born!");
-        brownEgg = new Sprite(50,50,pinkEggSize,'d');
-        brownEgg.vel.x = (enemyVelocity);
-        brownEggGang.add(brownEgg);
-        allEggs.add(brownEgg);
-    }
-
-    if (frameCount%20==0){
-        //fire bullets from brown eggs
-        for(count=0;count<brownEggGang.length;count++){
-            brownBullet = new Sprite (brownEggGang[count].x,brownEggGang[count].y,10,10,'d');
-            brownBullet.vel.y = 3;
-            allEggs.add(brownBullet);
-            brownBulletGang.add(brownBullet);
+    enemysToFire = 10;
+    if (enemysToFire>0){
+        if (frameCount%100==0){
+            console.log("an brown egg is born!");
+            brownEgg = new Sprite(50,50,pinkEggSize,'d');
+            brownEgg.vel.x = (enemyVelocity);
+            brownEggGang.add(brownEgg);
+            allEggs.add(brownEgg);
+            enemysToFire = enemysToFire-1;
+            console.log("enemysToFire",enemysToFire)
         }
-    }
 
+        if (frameCount%20==0){
+            //fire bullets from brown eggs
+            for(count=0;count<brownEggGang.length;count++){
+                brownBullet = new Sprite (brownEggGang[count].x,brownEggGang[count].y,10,10,'d');
+                brownBullet.vel.y = 3;
+                allEggs.add(brownBullet);
+                brownBulletGang.add(brownBullet);
+            }
         
+        }
+    }   
 };
 /*******************************************************************
  * pinkEggControls()
@@ -522,6 +527,7 @@ function shootBulletPink(){
 }
 function shootBomb(){
     bomb = new Sprite(pinkEgg.x,pinkEgg.y,15,'k');
+    bombGroup.add(bomb);
     bomb.color = bulletColors[0]
      bombFinalPosition = pinkEgg.y-100;
     bombActive = true;
@@ -536,8 +542,8 @@ function bombCheck(){
             //making shrapnel
             shrapnelAngle = -126
             for(count=0;count<8;count++){
-                console.log('making shrapnel',+count);
                 shrapnel = new Sprite(bomb.x,bomb.y,10,10,'k');
+                bombGroup.add(shrapnel);
                 shrapnel.rotationSpeed = ((Math.random(shrapnelRotation*2))*Math.random(ranArray));
                 shrapnel.rotation = shrapnelAngle;
                 shrapnelAngle = shrapnelAngle+36;
@@ -554,14 +560,9 @@ function bombCheck(){
 
                     //turn shrapnelTheta into radians
                     shrapnelTheta = shrapnelTheta*Math.PI/180.0;
-                    console.log('theta'+shrapnelTheta)
                     shrapnelTheta = Math.tan(shrapnelTheta);
-                    console.log('theta',shrapnelTheta)
                     shrapnelA = (shrapnelTheta*10)
                     shrapnelB = 10
-                    console.log(shrapnelTheta)
-                    console.log(shrapnelA/shrapnelB)
-                
                 
             //use shrapnelA and B to find velocity
 
