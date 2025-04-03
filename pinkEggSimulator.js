@@ -33,9 +33,9 @@ console.log("hello! Welcome to my game")
     var enemyCounter = 0;
     var firstDraw = 0;
     var pinkEggLives = 3;
-    
+    var brownEggsFired =0;
     var bombFinalPosition = 0;
-    
+    const enemiesToFire = 10;
     
     var shrapnelAngle = -36;
     var shrapnelRotation = [4,7];
@@ -89,7 +89,6 @@ function preload(){
  *************************************/
 function draw(){
     
-    
     //defnine visuals
     pinkEgg.color = 'pink';
     whiteEggGang.color = 'white';
@@ -139,6 +138,7 @@ function draw(){
             phase1();
         }
         if (enemyState=='2'){
+            console.log("why isn't this working")
             phase2();
         }
         // run function for controls
@@ -390,15 +390,32 @@ function whiteEggSweep(){
  * a function to change the phases when the phase is finished
  ************************************************/
 }
-function phaseMachine(){
+function phaseMachine(_enemysFired){
     console.log('changing phases'+enemyState);
+    /*
+    if (enemyState == 2 && _enemysFired==0){
+        if (frameCount%50==0){
+            whiteEggSweep()
+            enemyState = 3;
+        }
+    }else{
+        enemyState = 2;
+    }
+    */    
     if (enemyState == 1 ){
         if (frameCount%50==0){
         whiteEggSweep()
-        
+        console.log("Sweep")
+        firstDraw = 0;
+        console.log("firstDraw"+firstDraw)
         enemyState = 2;
-        console.log('changing phases'+enemyState);
+        console.log("CHANGING CHANGING CHANGING",enemyState)
         }
+    
+    } 
+    if (enemyState == 1 &&_enemysFired==enemiesToFire){
+        gameState = 3; 
+        firstDraw = 0;
     }
 }
 /***************************************************
@@ -437,28 +454,24 @@ function phase1(){
             whiteEggsFired++;
         }   
     }else if (enemysToFire == whiteEggsFired){
-        phaseMachine();
+        phaseMachine(whiteEggsFired);
     }
 }
 /*******************************************************
  * phase2()
  * The second phase, introducing brown Eggs
- * *************************************************** */       
-
-function phase2() {
-    var enemyVelocity = 2;
-    //random (0.5,3);
-    console.log("getting ready to fire")
-    enemysToFire = 10;
-    if (enemysToFire>0){
+ * *************************************************** */    
+function phase2(){ 
+    console.log(enemiesToFire<brownEggsFired)
+    console.log(brownEggsFired)
         if (frameCount%100==0){
             console.log("an brown egg is born!");
             brownEgg = new Sprite(50,50,pinkEggSize,'d');
             brownEgg.vel.x = (enemyVelocity);
             brownEggGang.add(brownEgg);
             allEggs.add(brownEgg);
-            enemysToFire = enemysToFire-1;
-            console.log("enemysToFire",enemysToFire)
+            brownEggsFired++;
+            console.log("fired eggs",brownEggsFired);
         }
 
         if (frameCount%20==0){
@@ -469,9 +482,11 @@ function phase2() {
                 allEggs.add(brownBullet);
                 brownBulletGang.add(brownBullet);
             }
-        
+            if (enemiesToFire==brownEggsFired){
+                console.log("switch to randomTime")
+                phaseMachine(brownEggsFired)
+            }
         }
-    }   
 };
 /*******************************************************************
  * pinkEggControls()
