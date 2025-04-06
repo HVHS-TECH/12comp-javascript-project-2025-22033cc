@@ -36,7 +36,7 @@ console.log("hello! Welcome to my game")
     var brownEggsFired =0;
     var bombFinalPosition = 0;
     const enemiesToFire = 10;
-    
+    var randomTime = 0;
     var shrapnelAngle = -36;
     var shrapnelRotation = [4,7];
     var shrapnelTheta  = 0;
@@ -45,6 +45,7 @@ console.log("hello! Welcome to my game")
     var shrapnelTotal = 0;
     var shrapnelAngle = 0;
     var shrapnelCompass = 0;
+    var randomDraw = 0;
 /***********************************
  * set up
  ***********************************/
@@ -89,6 +90,8 @@ function preload(){
  *************************************/
 function draw(){
     
+    world.gravity.y = 0;
+    world.gravity.x = 0;
     //defnine visuals
     pinkEgg.color = 'pink';
     whiteEggGang.color = 'white';
@@ -114,6 +117,7 @@ function draw(){
         startScreenSprites.add(buttonStart);
         startScreenSprites.add(buttonControl);
         startScreenSprites.add(indicator);
+        startScreenSprites.color = 'white'
         firstDraw = 1;
     }
     
@@ -134,12 +138,18 @@ function draw(){
         text("score:"+score,50,50);
         //run code of current phase
         console.log('enemystate=',+enemyState)
-        if (enemyState=='1'){
+        if (enemyState==1){
             phase1();
         }
-        if (enemyState=='2'){
-            console.log("why isn't this working")
+        if (enemyState==2){
             phase2();
+        }
+        if (enemyState==3){
+            if(randomDraw==0){
+                phase3();
+            }else{
+                console.log("occupied")
+            }
         }
         // run function for controls
         pinkEggControls()
@@ -397,36 +407,24 @@ function phaseMachine(_enemysFired){
     console.log('changing phases'+enemyState);
     
     if (enemyState == 2 && _enemysFired>=10){
-        if (frameCount%50==0){
-            whiteEggSweep()
-            enemyState = 3;
-            for(count =0; count<20; count++){
-            console.log("enemyState"+enemyState)
-            console.log("yes, thats right, my code works")
-        }
+        if (frameCount%200==0){
+            whiteEggSweep();
+            if (frameCount%100==0){
+                firstDraw = 0
+                randomDraw = 0;
+                enemyState = 3;
+            }
+            
         }
     }
-      
-   /*
-    if (enemyState == 1 ){
-        if (frameCount%50==0){
-        whiteEggSweep()
-        console.log("Sweep");
-        firstDraw = 0;
-        console.log("firstDraw"+firstDraw);
-        enemyState = 2;
-        console.log("CHANGING CHANGING CHANGING",enemyState)
-        }else{
-            console.log("no change")
-        }
-    } 
-        */
+
     if (enemyState == 1 &&_enemysFired==enemiesToFire){
         whiteEggSweep()
         console.log("finsihed the whiteEggSweep")
         enemyState = 2; 
         firstDraw = 0;
     }
+
 }
 /***************************************************
  * phase1()
@@ -470,24 +468,26 @@ function phase1(){
  * The second phase, introducing brown Eggs
  * *************************************************** */    
 function phase2(){ 
-    enemyVelocity = 4;
     console.log(enemiesToFire<brownEggsFired)
     console.log(brownEggsFired)
-        if (frameCount%100==0 && enemiesToFire>brownEggsFired){
-            console.log("an brown egg is born!");
-            brownEgg = new Sprite(50,50,pinkEggSize,'d');
-            brownEgg.vel.x = (enemyVelocity);
-            brownEggGang.add(brownEgg);
-            allEggs.add(brownEgg);
-            brownEggsFired++;
-            console.log("fired eggs",brownEggsFired);
-        }
+    var brownEggPosition=[1,50,50]
+    console.log(brownEggPosition)
+    if (frameCount%100==0 && enemiesToFire>brownEggsFired){
+        brownEgg = new Sprite(brownEggPosition[1],brownEggPosition[2],pinkEggSize,'k');
+        brownEgg.vel.x = (enemyVelocity);
+        brownEgg.vel.y = 0;
+        brownEggGang.add(brownEgg);
+        allEggs.add(brownEgg);
+        brownEggsFired++;
+        console.log("fired eggs",brownEggsFired);
+        console.log("hello")
+    }
 
         if (frameCount%20==0){
             //fire bullets from brown eggs
             for(count=0;count<brownEggGang.length;count++){
                 brownBullet = new Sprite (brownEggGang[count].x,brownEggGang[count].y,10,10,'d');
-                brownBullet.vel.y = 3;
+                brownBullet.vel.y = 4;
                 allEggs.add(brownBullet);
                 brownBulletGang.add(brownBullet);
             }
@@ -495,10 +495,91 @@ function phase2(){
             if (enemiesToFire==brownEggsFired){
                 console.log("switch to randomTime")
                 phaseMachine(brownEggsFired)
-            } else {
-                console.log('not yet')
+            } 
+        }
+}
+/********************************************************************
+ * phase 3()
+ * random time
+ ********************************************************************/
+function phase3(){
+    if (frameCount%100 == 0){
+        if (randomDraw == 0){
+            randomTime = Math.floor(Math.random()*4)
+            console.log(randomTime);
+            console.log(randomTime);
+            randomDraw = 1;
+        }
+
+        if (randomDraw == 1&frameCount%70==0){
+            console.log(randomTime)
+
+            if (randomTime == 0){
+                console.log("randomTime0")
+                randomDraw = 2;
+                whiteEggSweep();
+                randomDraw = 0;
+        
+            }
+            if (randomTime == 1 ){
+                console.log("randomTime1")
+                randomDraw = 2;
+                    whiteEggSweep();
+                    randomDraw =0;
+
+            }
+            if (randomTime == 2){
+                console.log("randomTime2")
+                whiteEggPosition = 50;
+                firstDraw = 0;
+                randomDraw = 2;
+                whiteEggHoming(16);
+                randomDraw = 0;
+            }
+            if (randomTime == 3){
+                console.log("randomTime3")
+                whiteEggPosition = 50;
+                firstDraw = 0;
+                randomDraw = 2;
+                whiteEggHoming(32);
+                randomDraw = 0;
+            }
+            if (randomTime == 4){
+                randomDraw = 2;
+                console.log("randomTime4")
+                randomDraw = 0 ;
             }
         }
+    }
+}
+
+function whiteEggHoming(_whiteEggBatches){
+    console.log("shoart"+firstDraw)
+    if (firstDraw  == 0){
+        console.log("shooo")
+        var whiteEggsFired = 0;
+        firstDraw = 1;
+    }
+
+    if (frameCount%30 == 0 && _whiteEggBatches>whiteEggsFired){
+        console.log("firing home")
+        for (count = 0; count<4; count++){
+            if (whiteEggPosition<250){
+                whiteEggPosition = canvasWidth-whiteEggPosition;
+            } else if(whiteEggPosition>250){
+                whiteEggPosition = whiteEggPosition-canvasWidth/2
+            }
+            whiteEggHome = new Sprite (whiteEggPosition,20,pinkEggSize,pinkEggSize,'d')
+            whiteEggGang.add(whiteEggHome);
+            allEggs.add(whiteEggHome)
+            whiteEggHome.moveTo(pinkEgg.x, pinkEgg.y, 3);
+            whiteEggsFired= whiteEggsFired-1;
+        } 
+         if(_whiteEggBatches==whiteEggsFired){
+        whiteEggGang.remove();
+        return;
+    }
+}
 };
 /*******************************************************************
  * pinkEggControls()
