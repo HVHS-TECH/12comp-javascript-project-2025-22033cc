@@ -363,7 +363,9 @@ function enemyHitBullet(_bullet,_egg){
 function whiteEggSweep(){
     enemyVelocity = 4;
     whiteEggPosition =-50;
+    console.log("sweepteststarting")
     for (count = 0; count<7;count++) { 
+        console.log("sweeptest"+count)
             //move the starting position for white egg        
             if(whiteEggPosition>600){
                 whiteEggPosition-=50;   
@@ -384,37 +386,45 @@ function whiteEggSweep(){
             }
 
         }
+        console.log("finished")
+}
 
 /************************************************
  * phaseMachine()
  * a function to change the phases when the phase is finished
  ************************************************/
-}
 function phaseMachine(_enemysFired){
     console.log('changing phases'+enemyState);
-    /*
-    if (enemyState == 2 && _enemysFired==0){
+    
+    if (enemyState == 2 && _enemysFired>=10){
         if (frameCount%50==0){
             whiteEggSweep()
             enemyState = 3;
+            for(count =0; count<20; count++){
+            console.log("enemyState"+enemyState)
+            console.log("yes, thats right, my code works")
         }
-    }else{
-        enemyState = 2;
+        }
     }
-    */    
+      
+   /*
     if (enemyState == 1 ){
         if (frameCount%50==0){
         whiteEggSweep()
-        console.log("Sweep")
+        console.log("Sweep");
         firstDraw = 0;
-        console.log("firstDraw"+firstDraw)
+        console.log("firstDraw"+firstDraw);
         enemyState = 2;
         console.log("CHANGING CHANGING CHANGING",enemyState)
+        }else{
+            console.log("no change")
         }
-    
     } 
+        */
     if (enemyState == 1 &&_enemysFired==enemiesToFire){
-        gameState = 3; 
+        whiteEggSweep()
+        console.log("finsihed the whiteEggSweep")
+        enemyState = 2; 
         firstDraw = 0;
     }
 }
@@ -424,14 +434,13 @@ function phaseMachine(_enemysFired){
  **************************************************/
 function phase1(){
     const enemysToFire = 10;
-    
    //choose a random velocity 
     var enemyVelocity = random(4, 7);
 
     //decide when to fire
     if (enemysToFire > whiteEggsFired){
 
-        if(frameCount%100==0){
+        if(frameCount%70==0){
             //move the starting position for white egg  
             if(whiteEggPosition>600){
                 whiteEggPosition-=50;   
@@ -450,7 +459,6 @@ function phase1(){
                 enemyCounter= enemyCounter+1;
                 whiteEggPosition = 500-whiteEggPosition;
             }
-
             whiteEggsFired++;
         }   
     }else if (enemysToFire == whiteEggsFired){
@@ -462,9 +470,10 @@ function phase1(){
  * The second phase, introducing brown Eggs
  * *************************************************** */    
 function phase2(){ 
+    enemyVelocity = 4;
     console.log(enemiesToFire<brownEggsFired)
     console.log(brownEggsFired)
-        if (frameCount%100==0){
+        if (frameCount%100==0 && enemiesToFire>brownEggsFired){
             console.log("an brown egg is born!");
             brownEgg = new Sprite(50,50,pinkEggSize,'d');
             brownEgg.vel.x = (enemyVelocity);
@@ -482,9 +491,12 @@ function phase2(){
                 allEggs.add(brownBullet);
                 brownBulletGang.add(brownBullet);
             }
+            console.log('checking')
             if (enemiesToFire==brownEggsFired){
                 console.log("switch to randomTime")
                 phaseMachine(brownEggsFired)
+            } else {
+                console.log('not yet')
             }
         }
 };
