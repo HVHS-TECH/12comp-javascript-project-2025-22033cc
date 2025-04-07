@@ -90,8 +90,6 @@ function preload(){
  *************************************/
 function draw(){
     
-    world.gravity.y = 0;
-    world.gravity.x = 0;
     //defnine visuals
     pinkEgg.color = 'pink';
     whiteEggGang.color = 'white';
@@ -145,11 +143,7 @@ function draw(){
             phase2();
         }
         if (enemyState==3){
-            if(randomDraw==0){
-                phase3();
-            }else{
-                console.log("occupied")
-            }
+          phase3();
         }
         // run function for controls
         pinkEggControls()
@@ -468,89 +462,82 @@ function phase1(){
  * The second phase, introducing brown Eggs
  * *************************************************** */    
 function phase2(){ 
+    if (firstDraw == 0){
+        brownEggsFired = 5;
+        firstDraw = 1;
+    }
+    enemyVelocity = 4; 
     console.log(enemiesToFire<brownEggsFired)
     console.log(brownEggsFired)
-    var brownEggPosition=[1,50,50]
-    console.log(brownEggPosition)
+    const brownEggPosition= 50;
     if (frameCount%100==0 && enemiesToFire>brownEggsFired){
-        brownEgg = new Sprite(brownEggPosition[1],brownEggPosition[2],pinkEggSize,'k');
+        brownEgg = new Sprite(brownEggPosition,brownEggPosition,pinkEggSize,'k');
         brownEgg.vel.x = (enemyVelocity);
-        brownEgg.vel.y = 0;
         brownEggGang.add(brownEgg);
         allEggs.add(brownEgg);
         brownEggsFired++;
-        console.log("fired eggs",brownEggsFired);
-        console.log("hello")
     }
-
+/*
         if (frameCount%20==0){
             //fire bullets from brown eggs
             for(count=0;count<brownEggGang.length;count++){
                 brownBullet = new Sprite (brownEggGang[count].x,brownEggGang[count].y,10,10,'d');
-                brownBullet.vel.y = 4;
+                brownBullet.vel.y = enemyVelocity;
                 allEggs.add(brownBullet);
                 brownBulletGang.add(brownBullet);
             }
-            console.log('checking')
+        }*/
+            if (frameCount%20==0){
+                //fire bullets from brown eggs
+                for(count=0;count<brownEggGang.length;count++){
+                    brownBullet = new Sprite (brownEggGang[count].x,brownEggGang[count].y,10,10,'dynamic');
+                    brownBullet.vel.y = 3;
+                    allEggs.add(brownBullet);
+                    brownBulletGang.add(brownBullet);
+                }
+            }
             if (enemiesToFire==brownEggsFired){
                 console.log("switch to randomTime")
                 phaseMachine(brownEggsFired)
             } 
-        }
+
 }
 /********************************************************************
  * phase 3()
  * random time
  ********************************************************************/
 function phase3(){
-    if (frameCount%100 == 0){
-        if (randomDraw == 0){
-            randomTime = Math.floor(Math.random()*4)
-            console.log(randomTime);
-            console.log(randomTime);
-            randomDraw = 1;
-        }
-
-        if (randomDraw == 1&frameCount%70==0){
-            console.log(randomTime)
-
-            if (randomTime == 0){
-                console.log("randomTime0")
-                randomDraw = 2;
-                whiteEggSweep();
-                randomDraw = 0;
-        
-            }
-            if (randomTime == 1 ){
-                console.log("randomTime1")
-                randomDraw = 2;
-                    whiteEggSweep();
-                    randomDraw =0;
-
-            }
-            if (randomTime == 2){
-                console.log("randomTime2")
-                whiteEggPosition = 50;
-                firstDraw = 0;
-                randomDraw = 2;
-                whiteEggHoming(16);
-                randomDraw = 0;
-            }
-            if (randomTime == 3){
-                console.log("randomTime3")
-                whiteEggPosition = 50;
-                firstDraw = 0;
-                randomDraw = 2;
-                whiteEggHoming(32);
-                randomDraw = 0;
-            }
-            if (randomTime == 4){
-                randomDraw = 2;
-                console.log("randomTime4")
-                randomDraw = 0 ;
-            }
-        }
+    if (randomDraw == 0){
+        randomTime = Math.floor(Math.random()*4)  
+        console.log(randomTime);
+        console.log(randomTime);
+        randomDraw = 1;
     }
+
+    if (frameCount%70==0){
+        console.log(randomTime)
+
+        if (randomTime == 0||randomTime == 1 ){
+            console.log("randomTime0")
+            randomDraw = 2;
+            whiteEggSweep();
+            randomDraw = 0;
+    
+        }
+        if (randomTime == 2||randomTime == 3){
+            console.log("randomTime3")
+            whiteEggPosition = 50;
+            firstDraw = 0;
+            randomDraw = 2;
+            whiteEggHoming(16);
+            randomDraw = 0;
+        }
+        if (randomTime == 4){
+            randomDraw = 2;
+            console.log("randomTime4")
+            randomDraw = 0 ;
+        }
+    }   
 }
 
 function whiteEggHoming(_whiteEggBatches){
