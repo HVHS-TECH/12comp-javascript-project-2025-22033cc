@@ -1,9 +1,6 @@
 
-
-
 console.log("hello! Welcome to my game")
-    
-
+//all universal constants
     const canvasWidth = 500;
     const canvasHeight = 700;
     const letterKeys =['w','a','s','d','k','l'];
@@ -17,8 +14,11 @@ console.log("hello! Welcome to my game")
     const ranArray = [-1,1];
     const buttonPosition=[250,250,250,300]
     const buttonSize = [200,30,10]
+    const enemiesToFire = 10;
+//all universal variables
     var score =0;
     var whiteEggsFired  = 0;
+    var whiteEggPosition=-200;
     var bulletOutputSpeed = 10;
     var bulletSpeed = -15;
     var bombSpeed = -5;
@@ -27,7 +27,6 @@ console.log("hello! Welcome to my game")
     var controls = letterKeys;
     var gameState = 'start';
     var enemyState = 0;
-    var whiteEggPosition=-200;
     var bulletPower = 100;
     var bulletRegain=0;
     var buttonOver = 1;
@@ -36,7 +35,6 @@ console.log("hello! Welcome to my game")
     var pinkEggLives = 3;
     var brownEggsFired =0;
     var bombFinalPosition = 0;
-    const enemiesToFire = 10;
     var randomTime = 0;
     var shrapnelAngle = -36;
     var shrapnelRotation = [4,7];
@@ -48,9 +46,6 @@ console.log("hello! Welcome to my game")
     var randomDraw = 0;
     var backgroundPlay;
     var backgroundStart;
-    var y1=0;
-    var y2=0;
-    const scrollSpeed = 2;
 /***********************************
  * set up
  ***********************************/
@@ -72,10 +67,9 @@ function setup(){
     endScreenSprites = new Group();
     shrapnelSecondHit = new Group();
     bbomb = new Group();
-
     //make the walls for collisions
     wallBot = new Sprite(canvasWidth/2,canvasHeight,canvasWidth,   wallThickness, "s");
-	wallTop = new Sprite(canvasWidth/2,  0,canvasWidth,   wallThickness, "s");
+	wallTop = new Sprite(canvasWidth/2,0,canvasWidth, wallThickness, "s");
 	wallRH = new Sprite(canvasWidth,  canvasHeight/2, wallThickness, canvasHeight, "s");
 	wallLH = new Sprite(0,  canvasHeight/2, wallThickness, canvasHeight, "s");
     walls.add(wallTop);
@@ -506,16 +500,7 @@ function phase2(){
         allEggs.add(brownEgg);
         brownEggsFired++;
     }
-/*
-        if (frameCount%20==0){
-            //fire bullets from brown eggs
-            for(count=0;count<brownEggGang.length;count++){
-                brownBullet = new Sprite (brownEggGang[count].x,brownEggGang[count].y,10,10,'d');
-                brownBullet.vel.y = enemyVelocity;
-                allEggs.add(brownBullet);
-                brownBulletGang.add(brownBullet);
-            }
-        }*/
+/
             if (frameCount%20==0){
                 //fire bullets from brown eggs
                 for(count=0;count<brownEggGang.length;count++){
