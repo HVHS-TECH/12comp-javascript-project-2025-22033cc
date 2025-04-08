@@ -45,7 +45,6 @@ console.log("hello! Welcome to my game")
     var shrapnelB = 0;
     var shrapnelTotal = 0;
     var shrapnelAngle = 0;
-    var shrapnelCompass = 0;
     var randomDraw = 0;
     var backgroundPlay;
     var backgroundStart;
@@ -71,6 +70,8 @@ function setup(){
     allEggs = new Group();
     startScreenSprites = new Group();
     endScreenSprites = new Group();
+    shrapnelSecondHit = new Group();
+    bbomb = new Group();
 
     //make the walls for collisions
     wallBot = new Sprite(canvasWidth/2,canvasHeight,canvasWidth,   wallThickness, "s");
@@ -106,13 +107,14 @@ function draw(){
     if (gameState=='start'){
         //setting up start screen
             
-    text("welcome to the pink Egg Simulator",50,50)
-    text("press Enter to select button!",50, 100)
+    fill("white")
+    text("welcome to ",50,50)
+    text("press Enter to select button!",50, 230)
 
     if (firstDraw == 0){
-        logoStart = new Sprite (200, 200, 100,50,'n')
+        logoStart = new Sprite (250,150, 50,20,'n')
         logoStart.image= (logo);
-        logoStart.resize = (100,50);
+        logoStart.scale = (0.6);
         buttonStart = new Sprite(buttonPosition[0],buttonPosition[1],buttonSize[0],buttonSize[1],'s');
         buttonStart.textsize = buttonSize[2]
         buttonStart.text = 'start a game ';
@@ -123,6 +125,7 @@ function draw(){
         startScreenSprites.add(buttonStart);
         startScreenSprites.add(buttonControl);
         startScreenSprites.add(indicator);
+        startScreenSprites.add(logoStart)
         startScreenSprites.color = 'white'
         firstDraw = 1;
     }
@@ -165,6 +168,9 @@ function draw(){
         wallLH.collides(brownEggGang,allEggsRemover);
         wallRH.collides(brownEggGang,allEggsRemover);
         walls.collides(brownBulletGang,allEggsRemover);
+        bombGroup.collides(allEggs,enemyHitBullet);
+        bbomb.collides(allEggs,bombHitEnemy);
+        
         bulletPowerCharge();
 
     } else if (gameState=='end'){
@@ -176,7 +182,7 @@ function draw(){
             pinkEgg.y = pinkEggStartPosition[1];
             buttonRestart = new Sprite(buttonPosition[0],buttonPosition[1],buttonSize[0],buttonSize[1],'s');
             buttonRestart.textsize = buttonSize[2]
-            buttonRestart.text = 'Restart a game';
+            buttonRestart.text = 'Restart game';
             buttonBack = new Sprite(buttonPosition[2],buttonPosition[3],buttonSize[0],buttonSize[1],'s');
             buttonBack.textsize = buttonSize[2];
             buttonBack.text = 'back to Start Screen'
@@ -244,6 +250,9 @@ function endButtons(){
     //if restart button pressed, restart game 
     gameState ='playing';
     enemyState = 1;
+    firstDraw = 0;
+    whiteEggsFired = 0;
+    brownEggsFired = 0
     score = 0;
     endScreenSprites.removeAll();
 }
@@ -308,8 +317,9 @@ function buttonClicked(){
             text("press WASD to move ", 50, 350);
             text("Press K to fire bullets",50,370);
             text("Press L to fire a bomb",50,390);
-            text( "You are pink Egg. The other egg jealous of colour!",50,410)
-            text("You need to fire back and rack up many point!",50,430)
+            text( "You are a pink Egg. The other eggs are jealous of your colour!",50,410)
+            text("You need to fire back and rack up points!",50,430)
+            text("watch out for your power level!",50,450)
         
         }
 
@@ -373,6 +383,11 @@ function enemyHitBullet(_bullet,_egg){
     _egg.remove();
     score=score+100;
 }
+function bombHitEnemy(_bomb,_egg){
+    _egg.remove();
+    score = score+50;
+}
+
 
 /**************************************************
  * whiteEggSweep
@@ -485,7 +500,7 @@ function phase2(){
     console.log(brownEggsFired)
     const brownEggPosition= 50;
     if (frameCount%100==0 && enemiesToFire>brownEggsFired){
-        brownEgg = new Sprite(brownEggPosition,brownEggPosition,pinkEggSize,'k');
+        brownEgg = new Sprite(brownEggPosition,brownEggPosition,pinkEggSize,'d');
         brownEgg.vel.x = (enemyVelocity);
         brownEggGang.add(brownEgg);
         allEggs.add(brownEgg);
@@ -506,6 +521,7 @@ function phase2(){
                 for(count=0;count<brownEggGang.length;count++){
                     brownBullet = new Sprite (brownEggGang[count].x,brownEggGang[count].y,10,10,'dynamic');
                     brownBullet.vel.y = 3;
+                    brownBullet.color = bulletColors[Math.floor(Math.random()*5)];
                     allEggs.add(brownBullet);
                     brownBulletGang.add(brownBullet);
                 }
@@ -636,7 +652,7 @@ function shootBulletPink(){
 }
 function shootBomb(){
     bomb = new Sprite(pinkEgg.x,pinkEgg.y,15,'k');
-    bombGroup.add(bomb);
+    bbomb.add(bomb);
     bomb.color = bulletColors[0]
      bombFinalPosition = pinkEgg.y-100;
     bombActive = true;
@@ -660,10 +676,9 @@ function bombCheck(){
                 //figure out the angles and how the shrapnel should move 
                     if (shrapnelAngle>90){
                         shrapnelTheta = shrapnelAngle-90;
-                         shrapnelCompass = 3;
+
                     }else{
                         shrapnelTheta = shrapnelAngle
-                        sharpnelCompass = 2
 
                     }
 
