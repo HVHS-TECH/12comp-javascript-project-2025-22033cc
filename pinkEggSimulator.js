@@ -500,6 +500,7 @@ function phase2(){
         allEggs.add(brownEgg);
         brownEggsFired++;
     }
+   
     if (frameCount%20==0){
                 //fire bullets from brown eggs
                 for(count=0;count<brownEggGang.length;count++){
