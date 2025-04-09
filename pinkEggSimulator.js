@@ -51,27 +51,35 @@ console.log("hello! Welcome to my game")
  ***********************************/
 function setup(){
     //canvasWidth = 500; canvasHeight=700
+    //setting up the canvas
     cnv = new Canvas (canvasWidth,canvasHeight,);
-    y2 = canvasWidth;
     displayMode('centered')
+    //creating sprite for player
     pinkEgg = new Sprite(pinkEggStartPosition[0],pinkEggStartPosition[1],pinkEggSize,'k');
+    //making sure firstDraw is 0
     firstDraw = 0;
+    //creating groups
+    //players bombs and bullets
     bulletGroup = new Group();
     bombGroup = new Group();
+    bbomb = new Group();
+    //enemy groups
     whiteEggGang = new Group();
     brownEggGang = new Group();
     brownBulletGang = new Group();
+    //walls groups
     walls = new Group();
     allEggs = new Group();
+    //startscreen and endscreen
     startScreenSprites = new Group();
     endScreenSprites = new Group();
-    shrapnelSecondHit = new Group();
-    bbomb = new Group();
+    
     //make the walls for collisions
     wallBot = new Sprite(canvasWidth/2,canvasHeight,canvasWidth,   wallThickness, "s");
 	wallTop = new Sprite(canvasWidth/2,0,canvasWidth, wallThickness, "s");
 	wallRH = new Sprite(canvasWidth,  canvasHeight/2, wallThickness, canvasHeight, "s");
 	wallLH = new Sprite(0,  canvasHeight/2, wallThickness, canvasHeight, "s");
+    //adding walls to wall group
     walls.add(wallTop);
     walls.add(wallBot);
     walls.add(wallRH);
@@ -83,6 +91,7 @@ function setup(){
  * preload
  *************************************/
 function preload(){
+    //preload backgrounds
     backgroundPlay = loadImage("assets/images/EggCarton.jpg") 
     backgroundStart = loadImage("/assets/images/pinkEggCartons.jpg")
     logo = loadImage("/assets/images/title card.png")
@@ -92,7 +101,7 @@ function preload(){
  *************************************/
 function draw(){
     
-    //defnine visuals
+    //defnine visuals and background
     pinkEgg.color = 'pink';
     whiteEggGang.color = 'white';
     brownEggGang.color = 'tan';
@@ -104,7 +113,7 @@ function draw(){
     fill("white")
     text("welcome to ",50,50)
     text("press Enter to select button!",50, 230)
-
+    //create sprites on the first draw loop
     if (firstDraw == 0){
         logoStart = new Sprite (250,150, 50,20,'n')
         logoStart.image= (logo);
@@ -123,7 +132,7 @@ function draw(){
         startScreenSprites.color = 'white'
         firstDraw = 1;
     }
-    
+    //check if enter has been pressed
     buttonClicked();
         //switch the indicator if changed
         if (buttonOver== 1){
@@ -137,10 +146,10 @@ function draw(){
     } else if (gameState=='playing'){
     //game runing 
         background(backgroundPlay)
+        //showing status of score and power level
         text("power-level"+bulletPower,50,100);
         text("score:"+score,50,50);
         //run code of current phase
-        console.log('enemystate=',+enemyState)
         if (enemyState==1){
             phase1();
         }
@@ -150,7 +159,7 @@ function draw(){
         if (enemyState==3){
           phase3();
         }
-        // run funcAtion for controls
+        // run function for controls
         pinkEggControls()
         if(bombActive == true){
             bombCheck()
@@ -188,7 +197,7 @@ function draw(){
             buttonOver = 1;
             firstDraw = 1;
         }
-
+        //define text
         text("Uh oh, you've been cracked!",50,100); 
         text("your score was "+score,50,200);
         text ('good job!',50,250)
@@ -209,75 +218,12 @@ function draw(){
    
 
 }
-function endButtons(){
-    //(buttonOver = 1)= back to Start; 
-    //(buttonOver = 2)= restart;
-
-    //figure out what button the player is over
-   if (kb.releases(controls[0])){
-    //button up
-    buttonOver++
-   }
-    
-   if (kb.releases(controls[2])){
-    //button down
-    buttonOver = buttonOver-1;
-       }
-    
-       if (buttonOver>2){
-        buttonOver=1
-       }
-
-       if(buttonOver==0){
-        buttonOver=2;
-       }
-    
-        if(kb.presses('enter')&&buttonOver==1){
-        // when button pressed, return to start screen
-        gameState = 'start'
-        firstDraw = 0;
-        score = 0;
-        endScreenSprites.removeAll();
-    }
-
-     if (kb.presses('enter')&&buttonOver==2){
-    //if restart button pressed, restart game 
-    gameState ='playing';
-    enemyState = 1;
-    firstDraw = 0;
-    whiteEggsFired = 0;
-    brownEggsFired = 0
-    score = 0;
-    endScreenSprites.removeAll();
-}
-               
-}
-
 
 function allEggsRemover(_walls,_eggs){
-    console.log('another egg has died of natural causes')
+    //remove egg that touched wall
     _eggs.remove();
 }
-/*************************************************
- * enemyFireBullets
- * fire the bullets from brown and quail eggs
- ************************************************/
-/*
-function enemyFireBullets(){
-    //fire bullets from all brown egg sprites active
-    if (frameCount%5==0){
-        for(count=0;count>brownEggGang.length;count++){
-            brownBullet = new Sprite (100,100,10,10,'d');
-            brownBullet.vel.y = 3;
-            brownBulletGang.add(brownBullet);
-            allEggs.add(brownBullet);
 
-            
-        }
-    }
-
-};
-*/
 /***********************************************
  * buttonClicked 
  * checking if button is being pressed
@@ -303,11 +249,8 @@ function buttonClicked(){
    if(buttonOver==0){
     buttonOver=2;
    }
-
-//if the game is on the start screen, execute the following when enter is pressed 
-        //show a thumbnail of the controls
-    //if (gameState == 'start'){
-        if(kb.pressing('enter')&&buttonOver==1){
+    //show a thumbnail of the controls
+    if(kb.pressing('enter')&&buttonOver==1){
             text("press WASD to move ", 50, 350);
             text("Press K to fire bullets",50,370);
             text("Press L to fire a bomb",50,390);
@@ -315,15 +258,57 @@ function buttonClicked(){
             text("You need to fire back and rack up points!",50,430)
             text("watch out for your power level!",50,450)
         
-        }
-
-        if (kb.presses('enter')&&buttonOver==2){
+    }
+    //put game into playing screen
+    if (kb.presses('enter')&&buttonOver==2){
             gameState ='playing';
             enemyState = 1;
             score = 0
             startScreenSprites.remove();
            }
-           
+}
+
+function endButtons(){
+    //(buttonOver = 1)= back to Start; 
+    //(buttonOver = 2)= restart;
+    //figure out what button the player is over
+   if (kb.releases(controls[0])){
+    //button up
+    buttonOver++
+   }
+    
+   if (kb.releases(controls[2])){
+    //button down
+    buttonOver = buttonOver-1;
+    }
+    
+    if (buttonOver>2){
+        buttonOver=1
+    }
+
+    if(buttonOver==0){
+        buttonOver=2;
+    }
+    
+    if(kb.presses('enter')&&buttonOver==1){
+        // when button pressed, return to start screen
+        gameState = 'start'
+        firstDraw = 0;
+        score = 0;
+        endScreenSprites.removeAll();
+    }
+
+     if (kb.presses('enter')&&buttonOver==2){
+    //if restart button pressed, restart game 
+    gameState ='playing';
+    enemyState = 1;
+    firstDraw = 0;
+    whiteEggsFired = 0;
+    brownEggsFired = 0
+    score = 0;
+    endScreenSprites.removeAll();
+    }
+               
 }
 
 /**************************************************
@@ -511,7 +496,7 @@ function phase2(){
                     brownBulletGang.add(brownBullet);
                 }
     }
-    
+
             if (enemiesToFire==brownEggsFired){
                 console.log("switch to randomTime")
                 phaseMachine(brownEggsFired)
