@@ -500,7 +500,7 @@ function phase2(){
         allEggs.add(brownEgg);
         brownEggsFired++;
     }
-   
+   console.log("changes");
     if (frameCount%20==0){
                 //fire bullets from brown eggs
                 for(count=0;count<brownEggGang.length;count++){
@@ -511,6 +511,7 @@ function phase2(){
                     brownBulletGang.add(brownBullet);
                 }
     }
+    
             if (enemiesToFire==brownEggsFired){
                 console.log("switch to randomTime")
                 phaseMachine(brownEggsFired)
