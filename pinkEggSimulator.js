@@ -500,8 +500,7 @@ function phase2(){
         allEggs.add(brownEgg);
         brownEggsFired++;
     }
-/
-            if (frameCount%20==0){
+              if (frameCount%20==0){
                 //fire bullets from brown eggs
                 for(count=0;count<brownEggGang.length;count++){
                     brownBullet = new Sprite (brownEggGang[count].x,brownEggGang[count].y,10,10,'dynamic');
