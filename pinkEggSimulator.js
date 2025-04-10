@@ -296,6 +296,9 @@ function endButtons(){
         firstDraw = 0;
         score = 0;
         endScreenSprites.removeAll();
+        whiteEggsFired = 0
+        powerLevel = 100;
+        brownEggsFired = 0
     }
 
      if (kb.presses('enter')&&buttonOver==2){
@@ -304,7 +307,8 @@ function endButtons(){
     enemyState = 1;
     firstDraw = 0;
     whiteEggsFired = 0;
-    brownEggsFired = 0
+    brownEggsFired = 0;
+    powerLevel = 100;
     score = 0;
     endScreenSprites.removeAll();
     }
@@ -321,6 +325,8 @@ function beginningOfTheEnd(){
     firstDraw = 0;
     gameState='end';
     allEggs.remove();
+    whiteEggsFired = 0;
+    bulletPower = 100;
     pinkEgg.vel.x = 0;
     pinkEgg.vel.y = 0;
     enemyState = 0;
