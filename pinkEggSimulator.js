@@ -1,7 +1,7 @@
 
 console.log("hello! Welcome to my game")
 //all universal constants
-    const canvasWidth = 500;
+    const CANVAS_WIDTH = 500;
     const canvasHeight = 700;
     const letterKeys =['w','a','s','d','k','l'];
     const arrowKeys=["up","left","down","right","z","x"];
@@ -15,27 +15,35 @@ console.log("hello! Welcome to my game")
     const buttonPosition=[250,250,250,300]
     const buttonSize = [200,30,10]
     const enemiesToFire = 10;
+    
 //all universal variables
     var score =0;
+    //white Egg variables
+    
     var whiteEggsFired  = 0;
     var whiteEggPosition=-200;
+    //brown egg variables
+    var brownEggsFired =0;
+    var bombFinalPosition = 0;
+    //bullets variables
     var bulletOutputSpeed = 10;
     var bulletSpeed = -15;
+    var bulletPower = 100;
+    var bulletRegain=0;
+    //bombs variable
     var bombSpeed = -5;
     var bombActive = false;
     var pinkEggSpeed =2;
     var controls = letterKeys;
+    //background variables
     var gameState = 'start';
     var enemyState = 0;
-    var bulletPower = 100;
-    var bulletRegain=0;
+    var randomDraw = 0;
     var buttonOver = 1;
     var enemyCounter = 0;
     var firstDraw = 0;
-    var pinkEggLives = 3;
-    var brownEggsFired =0;
-    var bombFinalPosition = 0;
     var randomTime = 0;
+    //shrapnel varaibels
     var shrapnelAngle = -36;
     var shrapnelRotation = [4,7];
     var shrapnelTheta  = 0;
@@ -43,16 +51,16 @@ console.log("hello! Welcome to my game")
     var shrapnelB = 0;
     var shrapnelTotal = 0;
     var shrapnelAngle = 0;
-    var randomDraw = 0;
+    //backgrounds
     var backgroundPlay;
     var backgroundStart;
 /***********************************
  * set up
  ***********************************/
 function setup(){
-    //canvasWidth = 500; canvasHeight=700
+    //CANVAS_WIDTH = 500; canvasHeight=700
     //setting up the canvas
-    cnv = new Canvas (canvasWidth,canvasHeight,);
+    cnv = new Canvas (CANVAS_WIDTH,canvasHeight,);
     displayMode('centered')
     //creating sprite for player
     pinkEgg = new Sprite(pinkEggStartPosition[0],pinkEggStartPosition[1],pinkEggSize,'k');
@@ -62,7 +70,8 @@ function setup(){
     //players bombs and bullets
     bulletGroup = new Group();
     bombGroup = new Group();
-    bbomb = new Group();
+    //bombs is seperate from sprite bomb, because you can not call a collsion of a sprite that does not exoist
+    bombs = new Group();
     //enemy groups
     whiteEggGang = new Group();
     brownEggGang = new Group();
@@ -75,9 +84,9 @@ function setup(){
     endScreenSprites = new Group();
     
     //make the walls for collisions
-    wallBot = new Sprite(canvasWidth/2,canvasHeight,canvasWidth,   wallThickness, "s");
-	wallTop = new Sprite(canvasWidth/2,0,canvasWidth, wallThickness, "s");
-	wallRH = new Sprite(canvasWidth,  canvasHeight/2, wallThickness, canvasHeight, "s");
+    wallBot = new Sprite(CANVAS_WIDTH/2,canvasHeight,CANVAS_WIDTH,   wallThickness, "s");
+	wallTop = new Sprite(CANVAS_WIDTH/2,0,CANVAS_WIDTH, wallThickness, "s");
+	wallRH = new Sprite(CANVAS_WIDTH,  canvasHeight/2, wallThickness, canvasHeight, "s");
 	wallLH = new Sprite(0,  canvasHeight/2, wallThickness, canvasHeight, "s");
     //adding walls to wall group
     walls.add(wallTop);
@@ -112,7 +121,7 @@ function draw(){
             
     fill("white")
     text("welcome to ",50,50)
-    text("press enter to press button!, press W and D to select.",50, 230)
+    text("press enter to press a button!, press W and D to select. W is up, s is down.",50, 230)
     //create sprites on the first draw loop
     if (firstDraw == 0){
         logoStart = new Sprite (250,150, 50,20,'n')
@@ -123,7 +132,7 @@ function draw(){
         buttonStart.text = 'start a game ';
         buttonControl = new Sprite(buttonPosition[2],buttonPosition[3],buttonSize[0],buttonSize[1],'s');
         buttonControl.textsize = buttonSize[2];
-        buttonControl.text = 'controls- hold enter to see'
+        buttonControl.text = 'controls- hold enter button to see'
         indicator = new Sprite(140,300,10,'s')
         startScreenSprites.add(buttonStart);
         startScreenSprites.add(buttonControl);
@@ -172,7 +181,7 @@ function draw(){
         wallRH.collides(brownEggGang,allEggsRemover);
         walls.collides(brownBulletGang,allEggsRemover);
         bombGroup.collides(allEggs,enemyHitBullet);
-        bbomb.collides(allEggs,bombHitEnemy);
+        bombs.collides(allEggs,bombHitEnemy);
         
         bulletPowerCharge();
 
@@ -219,10 +228,6 @@ function draw(){
 
 }
 
-function allEggsRemover(_walls,_eggs){
-    //remove egg that touched wall
-    _eggs.remove();
-}
 
 /***********************************************
  * buttonClicked 
@@ -267,6 +272,7 @@ function buttonClicked(){
             startScreenSprites.remove();
            }
 }
+
 /********************************************
  * endButtons()
  * buttons for the endscreen
@@ -361,56 +367,6 @@ function bulletPowerCharge(){
         bulletRegain=0;
     
 } 
-}
-
-/************************************************
- * enemyHitBullet()
- * collider
- * removing bullet or enemy egg.
- ***********************************************/
-function enemyHitBullet(_bullet,_egg){
-    // check if player bullets hit enemy
-    _bullet.remove();
-    _egg.remove();
-    score=score+100;
-}
-function bombHitEnemy(_bomb,_egg){
-    _egg.remove();
-    score = score+50;
-}
-
-
-/**************************************************
- * whiteEggSweep
- * a small total area attack that spawns a few eggs to fall down
- **************************************************/
-function whiteEggSweep(){
-    enemyVelocity = 4;
-    whiteEggPosition =-50;
-    console.log("sweepteststarting")
-    for (count = 0; count<7;count++) { 
-        console.log("sweeptest"+count)
-            //move the starting position for white egg        
-            if(whiteEggPosition>600){
-                whiteEggPosition-=50;   
-            } else {
-                whiteEggPosition=whiteEggPosition+50; 
-            }
-            if(whiteEggPosition==500-whiteEggPosition){
-                whiteEggPosition = whiteEggPosition-20;
-            }
-            //spawn 2 white eggs
-            for (var double=0;double<2; double++){
-                whiteEgg =  new Sprite(whiteEggPosition,50,pinkEggSize,'d');
-                whiteEgg.vel.y =(enemyVelocity);
-                whiteEggGang.add(whiteEgg);
-                allEggs.add(whiteEgg);
-                enemyCounter= enemyCounter+1;
-                whiteEggPosition = 600-whiteEggPosition;
-            }
-
-        }
-        console.log("finished")
 }
 
 /************************************************
@@ -552,26 +508,65 @@ function phase3(){
         }
     }   
 }
+/**************************************************
+ * whiteEggSweep
+ * a small total area attack that spawns a few eggs to fall down
+ **************************************************/
+function whiteEggSweep(){
+    enemyVelocity = 4;
+    whiteEggPosition =-50;
+    console.log("sweepteststarting")
+    for (count = 0; count<7;count++) { 
+        console.log("sweeptest"+count)
+            //move the starting position for white egg        
+            if(whiteEggPosition>600){
+                whiteEggPosition-=50;   
+            } else {
+                whiteEggPosition=whiteEggPosition+50; 
+            }
+            if(whiteEggPosition==500-whiteEggPosition){
+                whiteEggPosition = whiteEggPosition-20;
+            }
+            //spawn 2 white eggs
+            for (var double=0;double<2; double++){
+                whiteEgg =  new Sprite(whiteEggPosition,50,pinkEggSize,'d');
+                whiteEgg.vel.y =(enemyVelocity);
+                whiteEggGang.add(whiteEgg);
+                allEggs.add(whiteEgg);
+                enemyCounter= enemyCounter+1;
+                whiteEggPosition = 600-whiteEggPosition;
+            }
 
+        }
+        console.log("finished")
+}
+/***************************************************
+ * whiteEggHoming (_whiteEggBatches)
+ * attacks
+ * shoot whiteEgg
+ ***************************************************/
 function whiteEggHoming(_whiteEggBatches){
-    console.log("shoart"+firstDraw)
+    //
     if (firstDraw  == 0){
-        console.log("shooo")
+        //return sprites if previously used
         var whiteEggsFired = 0;
         firstDraw = 1;
     }
 
     if (frameCount%30 == 0 && _whiteEggBatches>whiteEggsFired){
-        console.log("firing home")
+        //create 4 eggs that home
         for (count = 0; count<4; count++){
+            //move position
             if (whiteEggPosition<250){
-                whiteEggPosition = canvasWidth-whiteEggPosition;
+                whiteEggPosition = CANVAS_WIDTH-whiteEggPosition;
             } else if(whiteEggPosition>250){
-                whiteEggPosition = whiteEggPosition-canvasWidth/2
+                whiteEggPosition = whiteEggPosition-CANVAS_WIDTH/2
             }
+            //create eggs
             whiteEggHome = new Sprite (whiteEggPosition,20,pinkEggSize,pinkEggSize,'d')
             whiteEggGang.add(whiteEggHome);
             allEggs.add(whiteEggHome)
+            //move towards pink egg
             whiteEggHome.moveTo(pinkEgg.x, pinkEgg.y, 3);
             whiteEggsFired= whiteEggsFired-1;
         } 
@@ -581,6 +576,31 @@ function whiteEggHoming(_whiteEggBatches){
     }
 }
 };
+/************************************************
+ * enemyHitBullet(_bullet,_egg)
+ * collider
+ * removing bullet or enemy egg.
+ ***********************************************/
+function enemyHitBullet(_bullet,_egg){
+    // check if player bullets hit enemy
+    _bullet.remove();
+    _egg.remove();
+    score=score+100;
+}
+function bombHitEnemy(_bomb,_egg){
+    _egg.remove();
+    score = score+50;
+}
+/***********************************************
+ * allEggsRemover(_walls,_eggs)
+ * collider
+ * remove _eggs
+ ***********************************************/
+function allEggsRemover(_walls,_eggs){
+    _eggs.remove();
+}
+
+
 /*******************************************************************
  * pinkEggControls()
  * moves the pink egg if controls are pressed
@@ -617,6 +637,7 @@ function pinkEggControls(){
         shootBulletPink();
     }
     if(kb.presses(controls[5])&&bulletPower>50){
+        //shoot bomb
         bulletPower = bulletPower-50;
         shootBomb();
     }
@@ -624,58 +645,63 @@ function pinkEggControls(){
     pinkEgg.vel.y = yPress;
 
 }
+/******************************************************
+ * shootBulletPink()
+ * shoot pink Egg if K is pressed
+ ****************************************************************/
 function shootBulletPink(){
-
+    //create sprite
     bullet = new Sprite (pinkEgg.x,pinkEgg.y,10,10,'k');
-    bullet.color = bulletColors[Math.floor(Math.random()*5)];
-    
+    bullet.color = bulletColors[Math.floor(Math.random()*5)];   
     bullet.vel.y=bulletSpeed;
-
     bulletGroup.add(bullet);
 }
+/***************************************************************
+ * shootBomb()
+ * create bomb for shoot
+ ***************************************************************/
 function shootBomb(){
     bomb = new Sprite(pinkEgg.x,pinkEgg.y,15,'k');
-    bbomb.add(bomb);
+    bombs.add(bomb);
     bomb.color = bulletColors[0]
-     bombFinalPosition = pinkEgg.y-100;
+    bombFinalPosition = pinkEgg.y-100;
     bombActive = true;
     bomb.vel.y = bombSpeed;
 }
+/****************************************************************
+ * bombCheck()
+ * Check if bomb is ready to seperate into shrapnel
+ * shoot shrapnel
+ ****************************************************************/
 function bombCheck(){
-        if(bombFinalPosition==bomb.y){
+    if(bombFinalPosition==bomb.y){
             bombFinalPosition = 0;
             bomb.vel.y = 0;
             bomb.color = 'red'
 
-            //making shrapnel
-            shrapnelAngle = -126
-            for(count=0;count<8;count++){
-                shrapnel = new Sprite(bomb.x,bomb.y,10,10,'k');
-                bombGroup.add(shrapnel);
-                shrapnel.rotationSpeed = ((Math.random(shrapnelRotation*2))*Math.random(ranArray));
-                shrapnel.rotation = shrapnelAngle;
-                shrapnelAngle = shrapnelAngle+36;
-                
-                //figure out the angles and how the shrapnel should move 
-                    if (shrapnelAngle>90){
-                        shrapnelTheta = shrapnelAngle-90;
-
-                    }else{
-                        shrapnelTheta = shrapnelAngle
-
-                    }
-
-                    //turn shrapnelTheta into radians
-                    shrapnelTheta = shrapnelTheta*Math.PI/180.0;
-                    shrapnelTheta = Math.tan(shrapnelTheta);
-                    shrapnelA = (shrapnelTheta*10)
-                    shrapnelB = 10
-                
+    //making shrapnel
+    shrapnelAngle = -126
+        for(count=0;count<8;count++){
+            shrapnel = new Sprite(bomb.x,bomb.y,10,10,'k');
+            bombGroup.add(shrapnel);
+            shrapnel.rotationSpeed = ((Math.random(shrapnelRotation*2))*Math.random(ranArray));
+            shrapnel.rotation = shrapnelAngle;
+            shrapnelAngle = shrapnelAngle+36;
+            //figure out the angles and how the shrapnel should move 
+        if (shrapnelAngle>90){
+            shrapnelTheta = shrapnelAngle-90;
+        }else{
+            shrapnelTheta = shrapnelAngle
+        }
+        //turn shrapnelTheta into radians
+            shrapnelTheta = shrapnelTheta*Math.PI/180.0;
+            shrapnelTheta = Math.tan(shrapnelTheta);
+            shrapnelA = (shrapnelTheta*10)
+            shrapnelB = 10
             //use shrapnelA and B to find velocity
-
             shrapnel.vel.x = -shrapnelA
             shrapnel.vel.y = -shrapnelB
         }
-        bomb.remove();
+    bomb.remove();
     }
 }
