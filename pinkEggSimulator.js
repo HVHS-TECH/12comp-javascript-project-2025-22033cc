@@ -112,7 +112,7 @@ function draw(){
             
     fill("white")
     text("welcome to ",50,50)
-    text("press Enter to select button!",50, 230)
+    text("press enter to press button!, press W and D to select.",50, 230)
     //create sprites on the first draw loop
     if (firstDraw == 0){
         logoStart = new Sprite (250,150, 50,20,'n')
@@ -123,7 +123,7 @@ function draw(){
         buttonStart.text = 'start a game ';
         buttonControl = new Sprite(buttonPosition[2],buttonPosition[3],buttonSize[0],buttonSize[1],'s');
         buttonControl.textsize = buttonSize[2];
-        buttonControl.text = 'controls- hold to see'
+        buttonControl.text = 'controls- hold enter to see'
         indicator = new Sprite(140,300,10,'s')
         startScreenSprites.add(buttonStart);
         startScreenSprites.add(buttonControl);
