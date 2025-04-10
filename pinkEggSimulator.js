@@ -92,9 +92,9 @@ function setup(){
  *************************************/
 function preload(){
     //preload backgrounds
-    backgroundPlay = loadImage("/assets/images/EggCarton.jpg") 
-    backgroundStart = loadImage("/assets/images/pinkEggCartons.jpg")
-    logo = loadImage("/assets/images/title card.png")
+    backgroundPlay = loadImage("assets/images/EggCarton.jpg") 
+    backgroundStart = loadImage("assets/images/pinkEggCartons.jpg")
+    logo = loadImage("assets/images/title card.png")
 }
 /*************************************
  * draw loop
@@ -267,7 +267,10 @@ function buttonClicked(){
             startScreenSprites.remove();
            }
 }
-
+/********************************************
+ * endButtons()
+ * buttons for the endscreen
+ *********************************************/
 function endButtons(){
     //(buttonOver = 1)= back to Start; 
     //(buttonOver = 2)= restart;
@@ -297,6 +300,7 @@ function endButtons(){
         score = 0;
         endScreenSprites.removeAll();
         whiteEggsFired = 0
+        whiteEggPosition = -200;
         powerLevel = 100;
         brownEggsFired = 0
     }
@@ -308,6 +312,7 @@ function endButtons(){
     firstDraw = 0;
     whiteEggsFired = 0;
     brownEggsFired = 0;
+    whiteEggPosition = -200;
     powerLevel = 100;
     score = 0;
     endScreenSprites.removeAll();
@@ -326,6 +331,7 @@ function beginningOfTheEnd(){
     gameState='end';
     allEggs.remove();
     whiteEggsFired = 0;
+    whiteEggPosition = -200;
     bulletPower = 100;
     pinkEgg.vel.x = 0;
     pinkEgg.vel.y = 0;
