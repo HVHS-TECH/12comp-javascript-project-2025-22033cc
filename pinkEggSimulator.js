@@ -92,7 +92,7 @@ function setup(){
  *************************************/
 function preload(){
     //preload backgrounds
-    backgroundPlay = loadImage("assets/images/EggCarton.jpg") 
+    backgroundPlay = loadImage("/assets/images/EggCarton.jpg") 
     backgroundStart = loadImage("/assets/images/pinkEggCartons.jpg")
     logo = loadImage("/assets/images/title card.png")
 }
